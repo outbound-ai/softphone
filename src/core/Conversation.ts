@@ -33,6 +33,10 @@ export default class Conversation {
     return Promise.resolve();
   }
 
+  disconnectAsync(): Promise<void> {
+    return Promise.resolve();
+  }
+
   hangupAsync(): Promise<void> {
     return Promise.resolve();
   }
