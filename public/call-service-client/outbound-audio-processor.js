@@ -1,3 +1,42 @@
+const BIAS = 0x84;
+const CLIP = 32635;
+
+const encodeTable = [
+    0,0,1,1,2,2,2,2,3,3,3,3,3,3,3,3,
+    4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,
+    5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+    5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+    6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+    6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+    6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+    6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
+    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
+    7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7
+];
+
+const decodeTable = [0,132,396,924,1980,4092,8316,16764];
+
+function encodeSample16(sample16) {
+    let sign;
+    let exponent;
+    let mantissa;
+    let muLawSample;
+    sign = (sample16 >> 8) & 0x80;
+    if (sign != 0) sample16 = -sample16;
+    sample16 = sample16 + BIAS;
+    if (sample16 > CLIP) sample16 = CLIP;
+    exponent = encodeTable[(sample16>>7) & 0xFF];
+    mantissa = (sample16 >> (exponent+3)) & 0x0F;
+    muLawSample = ~(sign | (exponent << 4) | mantissa);
+    return muLawSample;
+}
+
 function getSample16(sample32) {
     const buffer = new Int16Array(1);
 
@@ -9,14 +48,6 @@ function getSample16(sample32) {
     }
 
     return buffer[0];
-}
-
-function getHighOrderByte(sample16) {
-    return (sample16 >> 8) & 0xff;
-}
-
-function getLowOrderByte(sample16) {
-    return sample16 & 0xff;
 }
 
 class OutboundAudioProcessor extends AudioWorkletProcessor {

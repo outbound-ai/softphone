@@ -1,15 +1,15 @@
 
 const decodeTable = [0,132,396,924,1980,4092,8316,16764];
 
-function decodeSample(muLawSample) {
+function decodeSample8(sample8) {
     let sign;
     let exponent;
     let mantissa;
     let sample;
-    muLawSample = ~muLawSample;
-    sign = (muLawSample & 0x80);
-    exponent = (muLawSample >> 4) & 0x07;
-    mantissa = muLawSample & 0x0F;
+    sample8 = ~sample8;
+    sign = (sample8 & 0x80);
+    exponent = (sample8 >> 4) & 0x07;
+    mantissa = sample8 & 0x0F;
     sample = decodeTable[exponent] + (mantissa << (exponent+3));
     if (sign != 0) sample = -sample;
     return sample;
@@ -22,11 +22,6 @@ function getSample32(sample16) {
     else {
         return sample16 / 32768.0;
     }
-}
-
-// Convert a base64 string to buffer of WebAudio compatible audio samples.
-function getSamples(bytes) {
-    
 }
 
 class InboundAudioProcessor extends AudioWorkletProcessor {
@@ -48,8 +43,8 @@ class InboundAudioProcessor extends AudioWorkletProcessor {
         const sampleCount = bytes.length;
 
         for (let sampleIndex = 0; sampleIndex < sampleCount; sampleIndex++) {
-            const sample16 = decodeSample(bytes[sampleIndex]);
-            const sample32 = getSample32(sample16);
+            const sample16 = decodeSample8(bytes[sampleIndex]); // Decode from 8-bit uLaw sample to 16-bit signed integer sample.
+            const sample32 = getSample32(sample16);             // Encode 16-bit signed integer sample as 32-bit IEEE float sample.
             this._queue.push(sample32);
         }
     }
