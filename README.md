@@ -2,6 +2,8 @@
 This is a placeholder for the call service client NPM package.
 
 # Example Usage
+This is the currently proposed NPM package interface.
+
 ```javascript
 // Import the package.
 import CallService from "whatever-package";
@@ -34,10 +36,17 @@ conversation.onTranscriptAvailable += (participantId, message) => {
 ```
 
 # Build NPM Package
+```bash
 > npm install
+> npm run format
+> npm run lint
+> npm run test
 > npm run build
+```
 
-# Run Demonstration
+# Run Demonstration Application
+```bash
 > npm install
 > npm run serve
 > open http://localhost:9000/call-service-client/
+```
