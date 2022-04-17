@@ -13,14 +13,13 @@ declare const currentTime: number;
  */
 declare function registerProcessor(
   name: string,
-  processorCtor: (new (options?: AudioWorkletNodeOptions) => AudioWorkletProcessor) & { parameterDescriptors?: any[]; }
+  processorCtor: (new (options?: AudioWorkletNodeOptions) => AudioWorkletProcessor) & { parameterDescriptors?: any[] }
 ): unknown;
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletProcessor
  */
 interface AudioWorkletProcessor {
-
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletProcessor/port
    */
@@ -32,12 +31,10 @@ interface AudioWorkletProcessor {
   process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: Record<string, Float32Array>): boolean;
 }
 
-
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletProcessor
  */
 declare const AudioWorkletProcessor: {
   prototype: AudioWorkletProcessor;
-  new(options?: AudioWorkletNodeOptions, ...rest: unknown[]): AudioWorkletProcessor;
-  readonly parameterDescriptors: any[];
+  new(options?: AudioWorkletNodeOptions): AudioWorkletProcessor;
 };

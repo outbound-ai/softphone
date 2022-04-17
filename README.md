@@ -1,4 +1,4 @@
-# Call Service Javascript Client
+# Call Service Browser Softphone Client
 This is a placeholder for the call service client NPM package.
 
 # Example Usage
@@ -17,8 +17,7 @@ const conversation = await CallService.connectAsync(job.jobId);
 conversation.conversationId     // The conversation you joined.
 conversation.jobId              // The job that owns the conversation.
 conversation.participantId      // Your own participant id.
-conversation.participants       // A key/value map of all the participant ids => participant type in the conversation
-
+conversation.participants       // A key/value map of participant id to type.
 
 // Manipulate the conversation.
 conversation.removeParticipantAsync("00000000-0000-0000-0000000000");   // All participants have a unique id specific to the conversation.

@@ -1,10 +1,8 @@
-import Base64 from "./audio/codecs/Base64";
-import CallService from "./core/CallService";
-import Ieee from "./audio/codecs/Ieee";
-import Mulaw from "./audio/codecs/Mulaw";
+import Base64 from './audio/codecs/Base64';
+import CallService from './core/CallService';
+import Conversation from './core/Conversation';
+import Ieee from './audio/codecs/Ieee';
+import Mulaw from './audio/codecs/Mulaw';
 
-// Exporting these because they have potentially independent value.
-export { Base64, Ieee, Mulaw }
-
-// This is probably what most people are looking for.
-export default CallService;
+export { Base64, Conversation, Ieee, Mulaw }; // Potentially useful exports.
+export default CallService; // Probably what you want.
