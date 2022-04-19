@@ -1,7 +1,7 @@
 name: Merge Gate Workflow
 on:
   push:
-    branches-ignore:
+    branches:
       - main
 jobs:
   verify-package-build:
@@ -19,3 +19,6 @@ jobs:
       - run: npm run format -- --check
       - run: npm run lint
       - run: npm run build
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}

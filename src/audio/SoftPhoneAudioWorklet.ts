@@ -12,8 +12,8 @@ class SoftPhoneAudioWorklet extends AudioWorkletProcessor {
   _queue: number[] = []; // A queue containing all received samples.
   _sequenceNumber = 0; // Sequence number for microphone output messages.
 
-  constructor(...options) {
-    super(...options);
+  constructor(options?: AudioWorkletNodeOptions) {
+    super(options);
     this.port.onmessage = this.handleMessage.bind(this);
     this.process = this.process.bind(this);
   }
