@@ -49,4 +49,3 @@ conversation.onTranscriptAvailable += (participantId, message) => {
 > npm run serve
 > open http://localhost:9000/call-service-client/
 ```
-
