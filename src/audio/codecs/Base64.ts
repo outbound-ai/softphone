@@ -19,11 +19,11 @@ export default class Base64 {
 
   /**
    * Decodes a base64 string into an array of unsigned 8-bit integers.
-   * @param string A base64 encoded string.
+   * @param base64 A base64 encoded string.
    * @returns An array of unsigned 8-bit integers.
    */
-  static decode(string: string): Uint8Array {
-    const binaryString = atob(string);
+  static decode(base64: string): Uint8Array {
+    const binaryString = atob(base64);
 
     if (!binaryString) {
       return new Uint8Array(0);

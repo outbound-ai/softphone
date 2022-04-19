@@ -1,5 +1,6 @@
 import EventEmitter from 'eventemitter3';
-import { IWebSocketMessage, WebSocketMessageType } from './SoftPhoneWebSocket';
+import IWebSocketMessage from './WebSocketMessage';
+import WebSocketMessageType from './WebSocketMessageType';
 
 export default class SoftPhoneAudioContext {
   private _muted = true;

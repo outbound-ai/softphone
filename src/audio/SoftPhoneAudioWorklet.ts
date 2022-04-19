@@ -1,7 +1,8 @@
 import Base64 from './codecs/Base64';
 import Ieee from './codecs/Ieee';
 import Mulaw from './codecs/Mulaw';
-import { IWebSocketMessage, WebSocketMessageType, WebSocketMessage } from './SoftphoneWebSocket';
+import WebSocketMessage, { IWebSocketMessage } from './WebSocketMessage';
+import WebSocketMessageType from './WebSocketMessageType';
 
 /**
  * The AudioWorkletProcessor for the inbound audio

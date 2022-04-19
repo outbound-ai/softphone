@@ -36,9 +36,13 @@ export default class Conversation {
     return false;
   }
 
-  public mute(): void {}
+  public mute(): void {
+    throw Error("Not implemented yet.");
+  }
 
-  public unmute(): void {}
+  public unmute(): void {
+    throw Error("Not implemented yet.");
+  }
 
   public async sendSynthesizedSpeechAsync(digits: string): Promise<void> {
     return Promise.resolve();
@@ -56,5 +60,7 @@ export default class Conversation {
     this._socket.disconnect();
   }
 
-  public set onTranscriptAvailable(listener: OnTranscriptListener) {}
+  public set onTranscriptAvailable(listener: OnTranscriptListener) {
+    throw Error("Not implemented yet.");
+  }
 }
