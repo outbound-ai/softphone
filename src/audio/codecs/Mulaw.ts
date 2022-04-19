@@ -23,12 +23,7 @@ export default class Mulaw {
    * @returns The uLaw encoded byte.
    */
   static encode(sample16: number): number {
-    let sign;
-    let exponent;
-    let mantissa;
-    let sample8;
-
-    sign = (sample16 >> 8) & 0x80;
+    const sign = (sample16 >> 8) & 0x80;
 
     if (sign !== 0) {
       sample16 = -sample16;
@@ -40,9 +35,9 @@ export default class Mulaw {
       sample16 = CLIP;
     }
 
-    exponent = encodeTable[(sample16 >> 7) & 0xff];
-    mantissa = (sample16 >> (exponent + 3)) & 0x0f;
-    sample8 = ~(sign | (exponent << 4) | mantissa);
+    const exponent = encodeTable[(sample16 >> 7) & 0xff];
+    const mantissa = (sample16 >> (exponent + 3)) & 0x0f;
+    const sample8 = ~(sign | (exponent << 4) | mantissa);
 
     return sample8;
   }
@@ -53,16 +48,11 @@ export default class Mulaw {
    * @returns A 16-bit signed integer PCM audio sample.
    */
   static decode(sample8: number): number {
-    let sign;
-    let exponent;
-    let mantissa;
-    let sample16;
-
     sample8 = ~sample8;
-    sign = sample8 & 0x80;
-    exponent = (sample8 >> 4) & 0x07;
-    mantissa = sample8 & 0x0f;
-    sample16 = decodeTable[exponent] + (mantissa << (exponent + 3));
+    const sign = sample8 & 0x80;
+    const exponent = (sample8 >> 4) & 0x07;
+    const mantissa = sample8 & 0x0f;
+    let sample16 = decodeTable[exponent] + (mantissa << (exponent + 3));
 
     if (sign !== 0) {
       sample16 = -sample16;

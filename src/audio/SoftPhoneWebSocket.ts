@@ -3,7 +3,7 @@ import IWebSocketMessage from './WebSocketMessage';
 import WebSocketMessageType from './WebSocketMessageType';
 
 export default class SoftPhoneWebSocket {
-  private _connected: boolean = false;
+  private _connected = false;
   private _hostname: string;
   private _eventEmitter: EventEmitter;
   private _socket?: WebSocket;

@@ -12,7 +12,6 @@ class SoftPhoneAudioWorklet extends AudioWorkletProcessor {
   _queue: number[] = []; // A queue containing all received samples.
   _sequenceNumber = 0; // Sequence number for microphone output messages.
 
-  // @ts-ignore
   constructor(...options) {
     super(...options);
     this.port.onmessage = this.handleMessage.bind(this);
@@ -36,7 +35,7 @@ class SoftPhoneAudioWorklet extends AudioWorkletProcessor {
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletProcessor/process
    */
-  process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: Record<string, Float32Array>): boolean {
+  process(inputs: Float32Array[][], outputs: Float32Array[][]): boolean {
     let outputDevice = outputs[0];
 
     if (outputDevice) {

@@ -13,7 +13,9 @@ declare const currentTime: number;
  */
 declare function registerProcessor(
   name: string,
-  processorCtor: (new (options?: AudioWorkletNodeOptions) => AudioWorkletProcessor) & { parameterDescriptors?: any[] }
+  processorCtor: (new (options?: AudioWorkletNodeOptions) => AudioWorkletProcessor) & {
+    parameterDescriptors?: unknown[];
+  }
 ): unknown;
 
 /**
