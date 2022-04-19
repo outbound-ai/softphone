@@ -14,7 +14,7 @@ export default class Base64 {
     }
 
     const result = btoa(binaryString);
-    return result ? result : "";
+    return result ? result : '';
   }
 
   /**

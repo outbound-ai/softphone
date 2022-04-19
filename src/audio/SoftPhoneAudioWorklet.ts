@@ -8,8 +8,8 @@ import { IWebSocketMessage, WebSocketMessageType, WebSocketMessage } from './Sof
  * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletProcessor/AudioWorkletProcessor
  */
 class SoftPhoneAudioWorklet extends AudioWorkletProcessor {
-  _queue: Array<number> = []; // A queue containing all received samples.
-  _sequenceNumber = 0;        // Sequence number for microphone output messages.
+  _queue: number[] = []; // A queue containing all received samples.
+  _sequenceNumber = 0; // Sequence number for microphone output messages.
 
   // @ts-ignore
   constructor(...options) {
@@ -27,8 +27,8 @@ class SoftPhoneAudioWorklet extends AudioWorkletProcessor {
     // Add each inbound audio sample into the playback queue.
     for (let sampleIndex = 0; sampleIndex < samples8.length; sampleIndex++) {
       const sample16 = Mulaw.decode(samples8[sampleIndex]); // Decode uLaw sample as PCM.
-      const sample32 = Ieee.encode(sample16);               // Encode PCM sample as IEEE.
-      this._queue.push(sample32);                           // The queue is what the hardware will read from.
+      const sample32 = Ieee.encode(sample16); // Encode PCM sample as IEEE.
+      this._queue.push(sample32); // The queue is what the hardware will read from.
     }
   }
 
@@ -74,15 +74,17 @@ class SoftPhoneAudioWorklet extends AudioWorkletProcessor {
         const inputWaveBuffer = new Uint8Array(inputChannel.length);
 
         for (let sampleIndex = 0; sampleIndex < inputChannel.length; sampleIndex++) {
-          const sample16 = Ieee.decode(inputChannel[sampleIndex]);  // Decode IEEE sample as PCM.
-          inputWaveBuffer[sampleIndex] = Mulaw.encode(sample16);    // Encode PCM sample as uLaw.
+          const sample16 = Ieee.decode(inputChannel[sampleIndex]); // Decode IEEE sample as PCM.
+          inputWaveBuffer[sampleIndex] = Mulaw.encode(sample16); // Encode PCM sample as uLaw.
         }
 
-        this.port.postMessage(new WebSocketMessage(
-          this._sequenceNumber++,
-          WebSocketMessageType.OutboundAudio,
-          Base64.encode(inputWaveBuffer)
-        ));
+        this.port.postMessage(
+          new WebSocketMessage(
+            this._sequenceNumber++,
+            WebSocketMessageType.OutboundAudio,
+            Base64.encode(inputWaveBuffer)
+          )
+        );
       }
     }
 

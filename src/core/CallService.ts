@@ -27,6 +27,6 @@ export default class CallService {
   }
 
   set onLog(listener: OnLogListener) {
-    CallService.EventEmitter.addListener("log", listener);
+    CallService.EventEmitter.addListener('log', listener);
   }
 }

@@ -1,11 +1,11 @@
 import EventEmitter from 'eventemitter3';
 
 export class WebSocketMessageType {
-  static Metadata: string = "Metadata";
-  static InboundAudio: string = "InboundAudio";
-  static OutboundAudio: string = "OutboundAudio";
-  static InboundText: string = "InboundText";
-  static OutboundText: string = "OutboundText";
+  static Metadata: string = 'Metadata';
+  static InboundAudio: string = 'InboundAudio';
+  static OutboundAudio: string = 'OutboundAudio';
+  static InboundText: string = 'InboundText';
+  static OutboundText: string = 'OutboundText';
 }
 
 export interface IWebSocketMessage {
@@ -39,7 +39,6 @@ export class WebSocketMessage implements IWebSocketMessage {
 }
 
 export default class SoftPhoneWebSocket {
-  private _sequenceNumber: number = 0;
   private _connected: boolean = false;
   private _hostname: string;
   private _eventEmitter: EventEmitter;
@@ -62,22 +61,23 @@ export default class SoftPhoneWebSocket {
     eventEmitter.emit('log', `attempting connection to "${url}"`);
 
     const webSocket = new WebSocket(url);
-    webSocket.addEventListener("open", this.handleOpen.bind(this));
-    webSocket.addEventListener("message", this.handleMessage.bind(this));
-    webSocket.addEventListener("close", this.handleClose.bind(this));
+    webSocket.addEventListener('open', this.handleOpen.bind(this));
+    webSocket.addEventListener('message', this.handleMessage.bind(this));
+    webSocket.addEventListener('close', this.handleClose.bind(this));
 
     this._socket = webSocket;
+    this._connected = true;
   }
 
   public disconnect() {
     if (this._socket) {
-      this._socket.close(1000, "closed by user request");
+      this._socket.close(1000, 'closed by user request');
     }
   }
 
   private handleOpen(): void {
     this._connected = true;
-    this._eventEmitter.emit("socket_open");
+    this._eventEmitter.emit('socket_open');
     this._eventEmitter.emit('log', 'connection opened');
   }
 

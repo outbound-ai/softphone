@@ -1,4 +1,3 @@
-import EventEmitter from 'eventemitter3';
 import Participant from './Participant';
 import SoftPhoneWebSocket from '../audio/SoftPhoneWebSocket';
 import SoftPhoneAudioContext from '../audio/SoftPhoneAudioContext';
@@ -25,7 +24,7 @@ export default class Conversation {
     return '';
   }
 
-  get participants(): Array<Participant> {
+  get participants(): Participant[] {
     return [];
   }
 
@@ -37,28 +36,25 @@ export default class Conversation {
     return false;
   }
 
-  toggleMicrophoneMuteState(): void { }
+  public mute(): void {}
 
-  async sendSynthesizedSpeechAsync(digits: string): Promise<void> {
+  public unmute(): void {}
+
+  public async sendSynthesizedSpeechAsync(digits: string): Promise<void> {
     return Promise.resolve();
   }
 
-  async sendDtmfCodeAsync(digits: string): Promise<void> {
+  public async sendDtmfCodeAsync(digits: string): Promise<void> {
     return Promise.resolve();
   }
 
-  async removeParticipantAsync(): Promise<void> {
+  public async removeParticipantAsync(): Promise<void> {
     return Promise.resolve();
   }
 
-  disconnect() {
+  public disconnect() {
     this._socket.disconnect();
   }
 
-  async hangupAsync(): Promise<void> {
-    return Promise.resolve();
-  }
-
-  set onTranscriptAvailable(listener: OnTranscriptListener) {
-  }
+  public set onTranscriptAvailable(listener: OnTranscriptListener) {}
 }

@@ -30,7 +30,7 @@ export default class Mulaw {
 
     sign = (sample16 >> 8) & 0x80;
 
-    if (sign != 0) {
+    if (sign !== 0) {
       sample16 = -sample16;
     }
 
@@ -64,7 +64,7 @@ export default class Mulaw {
     mantissa = sample8 & 0x0f;
     sample16 = decodeTable[exponent] + (mantissa << (exponent + 3));
 
-    if (sign != 0) {
+    if (sign !== 0) {
       sample16 = -sample16;
     }
 

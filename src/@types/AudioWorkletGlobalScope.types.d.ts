@@ -36,5 +36,5 @@ interface AudioWorkletProcessor {
  */
 declare const AudioWorkletProcessor: {
   prototype: AudioWorkletProcessor;
-  new(options?: AudioWorkletNodeOptions): AudioWorkletProcessor;
+  new (options?: AudioWorkletNodeOptions): AudioWorkletProcessor;
 };
