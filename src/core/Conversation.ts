@@ -33,15 +33,15 @@ export default class Conversation {
   }
 
   get muted(): boolean {
-    return false;
+    return this._context.muted;
   }
 
   public mute(): void {
-    throw Error('Not implemented yet.');
+    this._context.mute();
   }
 
   public unmute(): void {
-    throw Error('Not implemented yet.');
+    this._context.unmute();
   }
 
   public async sendSynthesizedSpeechAsync(digits: string): Promise<void> {

@@ -1,5 +1,5 @@
 import EventEmitter from 'eventemitter3';
-import IWebSocketMessage from './WebSocketMessage';
+import IWebSocketMessage from './IWebSocketMessage';
 import WebSocketMessageType from './WebSocketMessageType';
 
 export default class SoftPhoneAudioContext {
@@ -26,7 +26,7 @@ export default class SoftPhoneAudioContext {
       const workletUrl = new URL('./bundled/SoftPhoneAudioWorklet.js', import.meta.url);
       await audioContext.audioWorklet.addModule(workletUrl);
       const workletNode = new AudioWorkletNode(audioContext, 'softphone-audio-worklet');
-      workletNode.port.onmessage = this.handleWorkletMessage;
+      workletNode.port.onmessage = this.handleWorkletMessage.bind(this);
       workletNode.connect(gainNode);
 
       // This connects the worklet to the microphone.

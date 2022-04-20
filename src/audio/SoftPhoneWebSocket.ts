@@ -1,5 +1,5 @@
 import EventEmitter from 'eventemitter3';
-import IWebSocketMessage from './WebSocketMessage';
+import IWebSocketMessage from './IWebSocketMessage';
 import WebSocketMessageType from './WebSocketMessageType';
 
 export default class SoftPhoneWebSocket {
@@ -9,7 +9,7 @@ export default class SoftPhoneWebSocket {
   private _socket?: WebSocket;
 
   constructor(hostname: string, eventEmitter: EventEmitter) {
-    eventEmitter.on('socket_outbound_audio', this.handleOutboundAudio);
+    eventEmitter.on(WebSocketMessageType.OutboundAudio, this.handleOutboundAudio.bind(this));
     this._hostname = hostname;
     this._eventEmitter = eventEmitter;
   }

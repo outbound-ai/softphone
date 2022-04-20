@@ -1,7 +1,7 @@
 import Base64 from './codecs/Base64';
 import Ieee from './codecs/Ieee';
 import Mulaw from './codecs/Mulaw';
-import WebSocketMessage, { IWebSocketMessage } from './WebSocketMessage';
+import IWebSocketMessage from './IWebSocketMessage';
 import WebSocketMessageType from './WebSocketMessageType';
 
 /**
@@ -78,13 +78,13 @@ class SoftPhoneAudioWorklet extends AudioWorkletProcessor {
           inputWaveBuffer[sampleIndex] = Mulaw.encode(sample16); // Encode PCM sample as uLaw.
         }
 
-        this.port.postMessage(
-          new WebSocketMessage(
-            this._sequenceNumber++,
-            WebSocketMessageType.OutboundAudio,
-            Base64.encode(inputWaveBuffer)
-          )
-        );
+        const message: IWebSocketMessage = {
+          sequenceNumber: this._sequenceNumber++,
+          type: WebSocketMessageType.OutboundAudio,
+          payload: Base64.encode(inputWaveBuffer)
+        };
+
+        this.port.postMessage(message);
       }
     }
 
