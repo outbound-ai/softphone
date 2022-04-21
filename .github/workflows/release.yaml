@@ -1,8 +1,9 @@
-name: Merge Gate Workflow
+name: Release NPM Package
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 jobs:
   verify-package-build:
     runs-on: 
@@ -21,4 +22,4 @@ jobs:
       - run: npm run build
       - uses: JS-DevTools/npm-publish@v1
         with:
-          token: ${{ secrets.NPM_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}

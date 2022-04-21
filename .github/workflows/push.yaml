@@ -1,4 +1,4 @@
-name: Merge Gate Workflow
+name: Merge Gate
 on:
   push:
     branches-ignore:
