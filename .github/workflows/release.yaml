@@ -1,6 +1,8 @@
 name: Release NPM Package
 on:
   push:
+    branches:
+      - main
 jobs:
   verify-package-build:
     runs-on: 
@@ -19,4 +21,5 @@ jobs:
       - run: npm run build
       - uses: JS-DevTools/npm-publish@v1
         with:
+          registry: npm.pkg.github.com
           token: ${{ secrets.GITHUB_TOKEN }}
