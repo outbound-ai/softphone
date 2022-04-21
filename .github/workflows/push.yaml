@@ -1,0 +1,21 @@
+name: Merge Gate Workflow
+on:
+  push:
+    branches-ignore:
+      - main
+jobs:
+  verify-package-build:
+    runs-on: 
+      - self-hosted
+      - linux
+      - dev
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - run: npm install
+      - run: npm run format -- --check
+      - run: npm run lint
+      - run: npm run build

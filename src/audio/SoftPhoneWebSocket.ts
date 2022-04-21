@@ -1,0 +1,127 @@
+import EventEmitter from 'eventemitter3';
+import IWebSocketMessage from './IWebSocketMessage';
+import WebSocketMessageType from './WebSocketMessageType';
+
+export type TranscriptListener = (participantId: string, message: string) => void;
+
+export default class SoftPhoneWebSocket {
+  private _connected = false;
+  private _hostname: string;
+  private _eventEmitter: EventEmitter;
+  private _socket?: WebSocket;
+  private _participants?: [Record<string, string>];
+  private _transcriptListener?: TranscriptListener;
+
+  constructor(hostname: string, eventEmitter: EventEmitter) {
+    eventEmitter.on(WebSocketMessageType.OutboundAudio, this.handleOutboundAudio.bind(this));
+    this._hostname = hostname;
+    this._eventEmitter = eventEmitter;
+  }
+
+  public get connected() {
+    return this._connected;
+  }
+
+  public connect(jobId: string) {
+    const hostname = this._hostname;
+    const eventEmitter = this._eventEmitter;
+    const url = `${hostname}/api/v1/jobs/${jobId}/browser`;
+    eventEmitter.emit('log', `attempting connection to "${url}"`);
+
+    const webSocket = new WebSocket(url);
+    webSocket.addEventListener('open', this.handleOpen.bind(this));
+    webSocket.addEventListener('message', this.handleMessage.bind(this));
+    webSocket.addEventListener('close', this.handleClose.bind(this));
+
+    this._socket = webSocket;
+    this._connected = true;
+  }
+
+  public participants() {
+    return this._participants || null;
+  }
+
+  public sendSynthesizedSpeech(text: string) {
+    const socket = this._socket;
+
+    if (socket && socket.readyState === 1) {
+      const message: IWebSocketMessage = {
+        sequenceNumber: 0,
+        type: WebSocketMessageType.OutboundText,
+        payload: text
+      };
+
+      socket.send(JSON.stringify(message));
+    }
+  }
+
+  public sendDtmfCode(digits: string) {
+    const socket = this._socket;
+
+    if (socket && socket.readyState === 1) {
+      const message: IWebSocketMessage = {
+        sequenceNumber: 0,
+        type: WebSocketMessageType.OutboundDtmfTone,
+        payload: digits
+      };
+
+      socket.send(JSON.stringify(message));
+    }
+  }
+
+  public set transcriptListener(listener: TranscriptListener) {
+    this._transcriptListener = listener;
+  }
+
+  public disconnect() {
+    if (this._socket) {
+      this._socket.close(1000, 'closed by user request');
+    }
+  }
+
+  private handleOpen(): void {
+    this._connected = true;
+    this._eventEmitter.emit('socket_open');
+    this._eventEmitter.emit('log', 'connection opened');
+  }
+
+  private handleMessage(message: MessageEvent): void {
+    const parsed: IWebSocketMessage = JSON.parse(message.data);
+    const eventEmitter = this._eventEmitter;
+
+    if (parsed.type === WebSocketMessageType.Metadata) {
+      this._participants = JSON.parse(parsed.payload);
+      return;
+    }
+
+    if (parsed.type === WebSocketMessageType.InboundText ||
+      parsed.type === WebSocketMessageType.OutboundText) {
+
+      if (this._transcriptListener) {
+        this._transcriptListener(parsed.type, parsed.payload);
+      }
+
+      return;
+    }
+
+    if (parsed.type === WebSocketMessageType.InboundAudio) {
+      eventEmitter.emit(WebSocketMessageType.InboundAudio, parsed);
+      return;
+    }
+
+    eventEmitter.emit('log', `unrecognized message: ${message.data}`);
+  }
+
+  private handleClose() {
+    this._connected = false;
+    this._eventEmitter.emit('log', 'connection closed');
+  }
+
+  private handleOutboundAudio(message: IWebSocketMessage) {
+    const socket = this._socket;
+
+    if (socket && socket.readyState === 1) {
+      socket.send(JSON.stringify(message));
+    }
+  }
+}
