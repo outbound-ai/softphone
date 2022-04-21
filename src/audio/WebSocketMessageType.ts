@@ -4,4 +4,5 @@ export default class WebSocketMessageType {
   static OutboundAudio = 'OutboundAudio';
   static InboundText = 'InboundText';
   static OutboundText = 'OutboundText';
+  static OutboundDtmfTone = 'OutboundDtmfTone';
 }

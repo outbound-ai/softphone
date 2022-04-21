@@ -1,31 +1,17 @@
-import Participant from './Participant';
-import SoftPhoneWebSocket from '../audio/SoftPhoneWebSocket';
+import SoftPhoneWebSocket, { TranscriptListener } from '../audio/SoftPhoneWebSocket';
 import SoftPhoneAudioContext from '../audio/SoftPhoneAudioContext';
 
-export type OnTranscriptListener = (participantId: string, message: string) => void;
-
-/**
- * Create a new Outbound.Calls.Softphone client.
- */
 export default class Conversation {
   private _socket: SoftPhoneWebSocket;
-  private _context: SoftPhoneAudioContext;
+  private _audio: SoftPhoneAudioContext;
 
   constructor(softPhoneWebSocket: SoftPhoneWebSocket, softPhoneAudioContext: SoftPhoneAudioContext) {
     this._socket = softPhoneWebSocket;
-    this._context = softPhoneAudioContext;
+    this._audio = softPhoneAudioContext;
   }
 
-  get jobId(): string {
-    return '';
-  }
-
-  get conversationId(): string {
-    return '';
-  }
-
-  get participants(): Participant[] {
-    return [];
+  get participants() {
+    return this._socket.participants;
   }
 
   get connected(): boolean {
@@ -33,25 +19,23 @@ export default class Conversation {
   }
 
   get muted(): boolean {
-    return this._context.muted;
+    return this._audio.muted;
   }
 
   public mute(): void {
-    this._context.mute();
+    this._audio.mute();
   }
 
   public unmute(): void {
-    this._context.unmute();
+    this._audio.unmute();
   }
 
-  public async sendSynthesizedSpeechAsync(digits: string): Promise<void> {
-    console.log(digits);
-    return Promise.resolve();
+  public sendSynthesizedSpeech(text: string) {
+    this._socket.sendSynthesizedSpeech(text);
   }
 
-  public async sendDtmfCodeAsync(digits: string): Promise<void> {
-    console.log(digits);
-    return Promise.resolve();
+  public sendDtmfCode(digits: string) {
+    this._socket.sendDtmfCode(digits);
   }
 
   public async removeParticipantAsync(): Promise<void> {
@@ -62,7 +46,7 @@ export default class Conversation {
     this._socket.disconnect();
   }
 
-  public set onTranscriptAvailable(listener: OnTranscriptListener) {
-    throw Error('Not implemented yet.');
+  public set onTranscriptAvailable(listener: TranscriptListener) {
+    this._socket.transcriptListener = listener;
   }
 }

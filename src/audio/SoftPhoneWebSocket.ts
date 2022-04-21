@@ -2,11 +2,15 @@ import EventEmitter from 'eventemitter3';
 import IWebSocketMessage from './IWebSocketMessage';
 import WebSocketMessageType from './WebSocketMessageType';
 
+export type TranscriptListener = (participantId: string, message: string) => void;
+
 export default class SoftPhoneWebSocket {
   private _connected = false;
   private _hostname: string;
   private _eventEmitter: EventEmitter;
   private _socket?: WebSocket;
+  private _participants?: [Record<string, string>];
+  private _transcriptListener?: TranscriptListener;
 
   constructor(hostname: string, eventEmitter: EventEmitter) {
     eventEmitter.on(WebSocketMessageType.OutboundAudio, this.handleOutboundAudio.bind(this));
@@ -33,6 +37,42 @@ export default class SoftPhoneWebSocket {
     this._connected = true;
   }
 
+  public participants() {
+    return this._participants || null;
+  }
+
+  public sendSynthesizedSpeech(text: string) {
+    const socket = this._socket;
+
+    if (socket && socket.readyState === 1) {
+      const message: IWebSocketMessage = {
+        sequenceNumber: 0,
+        type: WebSocketMessageType.OutboundText,
+        payload: text
+      };
+
+      socket.send(JSON.stringify(message));
+    }
+  }
+
+  public sendDtmfCode(digits: string) {
+    const socket = this._socket;
+
+    if (socket && socket.readyState === 1) {
+      const message: IWebSocketMessage = {
+        sequenceNumber: 0,
+        type: WebSocketMessageType.OutboundDtmfTone,
+        payload: digits
+      };
+
+      socket.send(JSON.stringify(message));
+    }
+  }
+
+  public set transcriptListener(listener: TranscriptListener) {
+    this._transcriptListener = listener;
+  }
+
   public disconnect() {
     if (this._socket) {
       this._socket.close(1000, 'closed by user request');
@@ -50,12 +90,17 @@ export default class SoftPhoneWebSocket {
     const eventEmitter = this._eventEmitter;
 
     if (parsed.type === WebSocketMessageType.Metadata) {
-      eventEmitter.emit(WebSocketMessageType.Metadata, parsed);
+      this._participants = JSON.parse(parsed.payload);
       return;
     }
 
-    if (parsed.type === WebSocketMessageType.InboundText) {
-      eventEmitter.emit(WebSocketMessageType.InboundText, parsed);
+    if (parsed.type === WebSocketMessageType.InboundText ||
+      parsed.type === WebSocketMessageType.OutboundText) {
+
+      if (this._transcriptListener) {
+        this._transcriptListener(parsed.type, parsed.payload);
+      }
+
       return;
     }
 
