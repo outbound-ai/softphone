@@ -1,8 +1,6 @@
 name: Release NPM Package
 on:
   push:
-    branches:
-      - main
 jobs:
   verify-package-build:
     runs-on: 
