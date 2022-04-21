@@ -1,4 +1,4 @@
-name: Merge Gate Workflow
+name: Release NPM Package
 on:
   push:
     branches:
@@ -21,4 +21,5 @@ jobs:
       - run: npm run build
       - uses: JS-DevTools/npm-publish@v1
         with:
-          token: ${{ secrets.NPM_TOKEN }}
+          registry: https://npm.pkg.github.com/
+          token: ${{ secrets.GITHUB_TOKEN }}
