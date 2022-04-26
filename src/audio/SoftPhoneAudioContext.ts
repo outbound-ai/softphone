@@ -6,8 +6,7 @@ export default class SoftPhoneAudioContext {
   private _muted = true;
   private _eventEmitter: EventEmitter;
   private _context?: AudioContext;
-  private _microphone?: MediaStreamAudioSourceNode;
-  private _worklet?: AudioWorkletNode;
+  private _worklet?: IAudioWorkletNode;
 
   constructor(eventEmitter: EventEmitter) {
     eventEmitter.on(WebSocketMessageType.InboundAudio, this.handleInboundAudio.bind(this));
@@ -25,16 +24,16 @@ export default class SoftPhoneAudioContext {
       // The audio worklet interfaces with the audio hardware.
       const workletUrl = new URL('./bundled/SoftPhoneAudioWorklet.js', import.meta.url);
       await audioContext.audioWorklet.addModule(workletUrl);
-      const workletNode = new AudioWorkletNode(audioContext, 'softphone-audio-worklet');
+      const workletNode = new AudioWorkletNode(audioContext, 'softphone-audio-worklet') as IAudioWorkletNode;
       workletNode.port.onmessage = this.handleWorkletMessage.bind(this);
       workletNode.connect(gainNode);
 
       // This connects the worklet to the microphone.
       const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
       const sourceNode = audioContext.createMediaStreamSource(mediaStream);
+      sourceNode.connect(workletNode);
 
       this._context = audioContext;
-      this._microphone = sourceNode;
       this._worklet = workletNode;
     }
   }
@@ -44,15 +43,17 @@ export default class SoftPhoneAudioContext {
   }
 
   public mute() {
-    if (this._microphone) {
-      this._microphone.disconnect();
+    if (this._context && this._worklet) {
+      const muteParameter = this._worklet.parameters.get('muted');
+      muteParameter.setValueAtTime(1, this._context.currentTime);
       this._muted = true;
     }
   }
 
   public unmute() {
-    if (this._microphone && this._worklet) {
-      this._microphone.connect(this._worklet);
+    if (this._context && this._worklet) {
+      const muteParameter = this._worklet.parameters.get('muted');
+      muteParameter.setValueAtTime(0, this._context.currentTime);
       this._muted = false;
     }
   }

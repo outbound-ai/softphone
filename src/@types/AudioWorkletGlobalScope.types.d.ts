@@ -38,5 +38,19 @@ interface AudioWorkletProcessor {
  */
 declare const AudioWorkletProcessor: {
   prototype: AudioWorkletProcessor;
-  new (options?: AudioWorkletNodeOptions): AudioWorkletProcessor;
+  new(options?: AudioWorkletNodeOptions): AudioWorkletProcessor;
 };
+
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioParamMap
+ */
+interface IAudioParamMap extends AudioParamMap {
+  get(name: string): AudioParam
+}
+
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletNode
+ */
+interface IAudioWorkletNode extends AudioWorkletNode {
+  parameters: IAudioParamMap
+}
