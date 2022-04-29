@@ -31,6 +31,7 @@
     "lib/**/*"
   ],
   "dependencies": {
+    "@outbound-ai/softphone": "^1.0.0",
     "abab": "^2.0.5",
     "eventemitter3": "^4.0.7"
   }

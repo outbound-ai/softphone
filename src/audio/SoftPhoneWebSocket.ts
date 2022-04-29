@@ -47,7 +47,7 @@ export default class SoftPhoneWebSocket {
     if (socket && socket.readyState === 1) {
       const message: IWebSocketMessage = {
         sequenceNumber: 0,
-        type: WebSocketMessageType.OutboundText,
+        type: WebSocketMessageType.SynthesizeSpeech,
         payload: text
       };
 
@@ -55,13 +55,27 @@ export default class SoftPhoneWebSocket {
     }
   }
 
-  public sendDtmfCode(digits: string) {
+  public sendTouchToneSequence(sequence: string) {
     const socket = this._socket;
 
     if (socket && socket.readyState === 1) {
       const message: IWebSocketMessage = {
         sequenceNumber: 0,
-        type: WebSocketMessageType.OutboundDtmfTone,
+        type: WebSocketMessageType.SynthesizeAlphanumericSequence,
+        payload: sequence
+      };
+
+      socket.send(JSON.stringify(message));
+    }
+  }
+
+  public sendDtmfCodes(digits: string) {
+    const socket = this._socket;
+
+    if (socket && socket.readyState === 1) {
+      const message: IWebSocketMessage = {
+        sequenceNumber: 0,
+        type: WebSocketMessageType.SynthesizeDtmfSequence,
         payload: digits
       };
 
@@ -76,6 +90,20 @@ export default class SoftPhoneWebSocket {
   public disconnect() {
     if (this._socket) {
       this._socket.close(1000, 'closed by user request');
+    }
+  }
+
+  public hangup() {
+    const socket = this._socket;
+
+    if (socket && socket.readyState === 1) {
+      const message: IWebSocketMessage = {
+        sequenceNumber: 0,
+        type: WebSocketMessageType.Hangup,
+        payload: ""
+      };
+
+      socket.send(JSON.stringify(message));
     }
   }
 
@@ -95,7 +123,7 @@ export default class SoftPhoneWebSocket {
     }
 
     if (parsed.type === WebSocketMessageType.InboundText ||
-      parsed.type === WebSocketMessageType.OutboundText) {
+      parsed.type === WebSocketMessageType.SynthesizeSpeech) {
 
       if (this._transcriptListener) {
         this._transcriptListener(parsed.type, parsed.payload);

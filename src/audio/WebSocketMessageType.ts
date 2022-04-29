@@ -3,6 +3,8 @@ export default class WebSocketMessageType {
   static InboundAudio = 'InboundAudio';
   static OutboundAudio = 'OutboundAudio';
   static InboundText = 'InboundText';
-  static OutboundText = 'OutboundText';
-  static OutboundDtmfTone = 'OutboundDtmfTone';
+  static SynthesizeSpeech = 'SynthesizeSpeech';
+  static SynthesizeDtmfSequence = 'SynthesizeDtmfSequence';
+  static SynthesizeAlphanumericSequence = 'SynthesizeAlphanumericSequence';
+  static Hangup = 'Hangup';
 }
