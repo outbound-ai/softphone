@@ -1,6 +1,6 @@
 {
   "name": "@outbound-ai/softphone",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -31,6 +31,7 @@
     "lib/**/*"
   ],
   "dependencies": {
+    "@outbound-ai/softphone": "^1.0.0",
     "abab": "^2.0.5",
     "eventemitter3": "^4.0.7"
   }

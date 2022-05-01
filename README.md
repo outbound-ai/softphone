@@ -5,27 +5,30 @@ This is a placeholder for the call service client NPM package.
 This is the currently proposed NPM package interface.
 
 ```javascript
-// Import the package.
+
+// Import the package and configure the URL. You should only create one instance of 
+// the call service per browser tab and use it for all the callse.
 import CallService from "whatever-package";
+const callService = new CallService("ws(s)://callservice.host.com");
 
-// Start a job and join the current conversation.
-const slotMappings = { "patient_id": "12345abc" }
-const job = await CallService.createJobAsync("InteractiveIvr", "4194903803", slotMappings);
-const conversation = await CallService.connectAsync(job.jobId);
+// To join a conversation, you need to have the call's job id.
+const conversation = await callService.getConversationAsync("00000000-0000-0000-0000-0000000000");
+conversation.connected    // This will become true as long as the conversation is connected.
 
-// Get the conversation metadata.
-conversation.conversationId     // The conversation you joined.
-conversation.jobId              // The job that owns the conversation.
-conversation.participantId      // Your own participant id.
-conversation.participants       // A key/value map of participant id to type.
+// You can control the outbound audio using the following methods.
+conversation.muted;       // The mute state.
+conversation.mute();      // Mute the microphone.
+conversation.unmute();    // Unmute the microphone.
+conversation.sendSynthesizedSpeech("Hello world.");                     // Send a synthesized audio response generated from text.
+conversation.sendDtmfCode("123abc");                                    // Send the dial tone audio signals represented by the text.
 
-// Manipulate the conversation.
-conversation.removeParticipantAsync("00000000-0000-0000-0000000000");   // All participants have a unique id specific to the conversation.
-conversation.sendSynthesizedSpeechAsync("Hello world.");                // Same behavior as if the IVR Agent did it.
-conversation.sendDtmfCodeAsync("123abc");                               // Same behavior as if the IVR Agent did it.
-conversation.hangUpAsync();                                             // Not clear if this disconnects you, or ends the call for all participants.
+// You can control the conversation using these methods.
+conversation.participants();                                            // Retrieves metadata about the call participants.
+conversation.removeParticipantAsync("00000000-0000-0000-0000000000");   // Removes a participant from the call.
+conversation.disconnect();                                              // This leaves the call without interrupting it.
+conversation.hangUpAsync();                                             // This ends the call for all participants.
 
-// Handle events.
+// You can recieve incoming chat transcripts throuch this event handler.
 conversation.onTranscriptAvailable += (participantId, message) => {
   // If participantId == conversation.participantId then you are the originator. Otherwise
   // it's safe to assume the virtual agent is the originator. If we ever have a call with

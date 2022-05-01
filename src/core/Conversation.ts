@@ -30,12 +30,12 @@ export default class Conversation {
     this._audio.unmute();
   }
 
-  public sendSynthesizedSpeech(text: string) {
-    this._socket.sendSynthesizedSpeech(text);
+  public synthesizeSpeech(text: string) {
+    this._socket.synthesizeSpeech(text);
   }
 
-  public sendDtmfCode(digits: string) {
-    this._socket.sendDtmfCode(digits);
+  public synthesizeTouchTones(sequence: string) {
+    this._socket.synthesizeTouchTones(sequence);
   }
 
   public async removeParticipantAsync(): Promise<void> {
@@ -44,6 +44,10 @@ export default class Conversation {
 
   public disconnect() {
     this._socket.disconnect();
+  }
+
+  public hangup() {
+    this._socket.hangup();
   }
 
   public set onTranscriptAvailable(listener: TranscriptListener) {
