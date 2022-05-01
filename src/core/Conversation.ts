@@ -30,16 +30,12 @@ export default class Conversation {
     this._audio.unmute();
   }
 
-  public sendSynthesizedSpeech(text: string) {
-    this._socket.sendSynthesizedSpeech(text);
+  public synthesizeSpeech(text: string) {
+    this._socket.synthesizeSpeech(text);
   }
 
-  public sendTouchToneSequence(sequence: string) {
-    this._socket.sendTouchToneSequence(sequence);
-  }
-
-  public sendDtmfCodes(digits: string) {
-    this._socket.sendDtmfCodes(digits);
+  public synthesizeTouchTones(sequence: string) {
+    this._socket.synthesizeTouchTones(sequence);
   }
 
   public async removeParticipantAsync(): Promise<void> {

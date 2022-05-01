@@ -41,7 +41,7 @@ export default class SoftPhoneWebSocket {
     return this._participants || null;
   }
 
-  public sendSynthesizedSpeech(text: string) {
+  public synthesizeSpeech(text: string) {
     const socket = this._socket;
 
     if (socket && socket.readyState === 1) {
@@ -55,27 +55,13 @@ export default class SoftPhoneWebSocket {
     }
   }
 
-  public sendTouchToneSequence(sequence: string) {
+  public synthesizeTouchTones(digits: string) {
     const socket = this._socket;
 
     if (socket && socket.readyState === 1) {
       const message: IWebSocketMessage = {
         sequenceNumber: 0,
-        type: WebSocketMessageType.SynthesizeAlphanumericSequence,
-        payload: sequence
-      };
-
-      socket.send(JSON.stringify(message));
-    }
-  }
-
-  public sendDtmfCodes(digits: string) {
-    const socket = this._socket;
-
-    if (socket && socket.readyState === 1) {
-      const message: IWebSocketMessage = {
-        sequenceNumber: 0,
-        type: WebSocketMessageType.SynthesizeDtmfSequence,
+        type: WebSocketMessageType.SynthesizeTouchTone,
         payload: digits
       };
 
