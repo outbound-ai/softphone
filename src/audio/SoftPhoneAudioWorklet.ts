@@ -37,6 +37,10 @@ class SoftPhoneAudioWorklet extends AudioWorkletProcessor {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletNode/port#examples
    */
   handleMessage(event: MessageEvent<IWebSocketMessage>): void {
+    if (event.data.payload == null) {
+      throw new Error("Encountered null payload on audio message.");
+    }
+
     const samples8 = Base64.decode(event.data.payload);
 
     // Add each inbound audio sample into the playback queue.
@@ -98,7 +102,9 @@ class SoftPhoneAudioWorklet extends AudioWorkletProcessor {
         const message: IWebSocketMessage = {
           sequenceNumber: this._sequenceNumber++,
           type: WebSocketMessageType.OutboundAudio,
-          payload: Base64.encode(inputWaveBuffer)
+          payload: Base64.encode(inputWaveBuffer),
+          participantId: null,
+          participantType: null
         };
 
         this.port.postMessage(message);

@@ -15,6 +15,7 @@ export default class SoftPhoneAudioContext {
 
   public async initializeAsync(): Promise<void> {
     if (!this._context) {
+
       // This connects a gain node to the audio context.
       const audioContext = new AudioContext({ sampleRate: 8000 });
       const gainNode = audioContext.createGain();

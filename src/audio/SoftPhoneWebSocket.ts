@@ -2,7 +2,7 @@ import EventEmitter from 'eventemitter3';
 import IWebSocketMessage from './IWebSocketMessage';
 import WebSocketMessageType from './WebSocketMessageType';
 
-export type TranscriptListener = (participantId: string, message: string) => void;
+export type TranscriptListener = (participantId: string, participantType: string, message: string) => void;
 
 export default class SoftPhoneWebSocket {
   private _connected = false;
@@ -48,7 +48,9 @@ export default class SoftPhoneWebSocket {
       const message: IWebSocketMessage = {
         sequenceNumber: 0,
         type: WebSocketMessageType.SynthesizeSpeech,
-        payload: text
+        payload: text,
+        participantId: null,
+        participantType: null
       };
 
       socket.send(JSON.stringify(message));
@@ -62,7 +64,9 @@ export default class SoftPhoneWebSocket {
       const message: IWebSocketMessage = {
         sequenceNumber: 0,
         type: WebSocketMessageType.SynthesizeTouchTone,
-        payload: digits
+        payload: digits,
+        participantId: null,
+        participantType: null
       };
 
       socket.send(JSON.stringify(message));
@@ -86,7 +90,9 @@ export default class SoftPhoneWebSocket {
       const message: IWebSocketMessage = {
         sequenceNumber: 0,
         type: WebSocketMessageType.Hangup,
-        payload: ""
+        payload: null,
+        participantId: null,
+        participantType: null
       };
 
       socket.send(JSON.stringify(message));
@@ -103,16 +109,15 @@ export default class SoftPhoneWebSocket {
     const parsed: IWebSocketMessage = JSON.parse(message.data);
     const eventEmitter = this._eventEmitter;
 
-    if (parsed.type === WebSocketMessageType.Metadata) {
+    if (parsed.type === WebSocketMessageType.Metadata && parsed.payload) {
       this._participants = JSON.parse(parsed.payload);
       return;
     }
 
-    if (parsed.type === WebSocketMessageType.InboundText ||
-      parsed.type === WebSocketMessageType.SynthesizeSpeech) {
+    if (parsed.type === WebSocketMessageType.Transcript) {
 
-      if (this._transcriptListener) {
-        this._transcriptListener(parsed.type, parsed.payload);
+      if (this._transcriptListener && parsed.participantId && parsed.participantType && parsed.payload) {
+        this._transcriptListener(parsed.participantId, parsed.participantType, parsed.payload);
       }
 
       return;
