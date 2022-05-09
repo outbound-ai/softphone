@@ -1,4 +1,4 @@
-import SoftPhoneWebSocket, { TranscriptListener } from '../audio/SoftPhoneWebSocket';
+import SoftPhoneWebSocket, { ConnectionStateListener, ParticipantStateListener, TranscriptListener } from '../audio/SoftPhoneWebSocket';
 import SoftPhoneAudioContext from '../audio/SoftPhoneAudioContext';
 
 export default class Conversation {
@@ -38,8 +38,8 @@ export default class Conversation {
     this._socket.synthesizeTouchTones(sequence);
   }
 
-  public async removeParticipantAsync(): Promise<void> {
-    return Promise.resolve();
+  public removeParticipant(participantId: string) {
+    this._socket.removeParticipant(participantId);
   }
 
   public disconnect() {
@@ -48,6 +48,14 @@ export default class Conversation {
 
   public hangup() {
     this._socket.hangup();
+  }
+
+  public set onConnectionStateChanged(listener: ConnectionStateListener) {
+    this._socket.connectionStateListener = listener;
+  }
+
+  public set onParticipantStateChanged(listener: ParticipantStateListener) {
+    this._socket.participantStateListener = listener;
   }
 
   public set onTranscriptAvailable(listener: TranscriptListener) {

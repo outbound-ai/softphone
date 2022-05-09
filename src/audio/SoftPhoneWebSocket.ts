@@ -2,6 +2,8 @@ import EventEmitter from 'eventemitter3';
 import IWebSocketMessage from './IWebSocketMessage';
 import WebSocketMessageType from './WebSocketMessageType';
 
+export type ConnectionStateListener = (connected: boolean) => void;
+export type ParticipantStateListener = (participants: Record<string, string>) => void;
 export type TranscriptListener = (participantId: string, participantType: string, message: string) => void;
 
 export default class SoftPhoneWebSocket {
@@ -9,7 +11,9 @@ export default class SoftPhoneWebSocket {
   private _hostname: string;
   private _eventEmitter: EventEmitter;
   private _socket?: WebSocket;
-  private _participants?: [Record<string, string>];
+  private _participants: Record<string, string> = {};
+  private _connectionStateListener?: ConnectionStateListener;
+  private _participantStateListener?: ParticipantStateListener;
   private _transcriptListener?: TranscriptListener;
 
   constructor(hostname: string, eventEmitter: EventEmitter) {
@@ -73,6 +77,14 @@ export default class SoftPhoneWebSocket {
     }
   }
 
+  public set connectionStateListener(listener: ConnectionStateListener) {
+    this._connectionStateListener = listener;
+  }
+
+  public set participantStateListener(listener: ParticipantStateListener) {
+    this._participantStateListener = listener;
+  }
+
   public set transcriptListener(listener: TranscriptListener) {
     this._transcriptListener = listener;
   }
@@ -99,8 +111,25 @@ export default class SoftPhoneWebSocket {
     }
   }
 
+  public removeParticipant(participantId: string) {
+    const socket = this._socket;
+
+    if (socket && socket.readyState === 1) {
+      const message: IWebSocketMessage = {
+        sequenceNumber: 0,
+        type: WebSocketMessageType.RemoveParticipant,
+        payload: participantId,
+        participantId: null,
+        participantType: null
+      };
+
+      socket.send(JSON.stringify(message));
+    }
+  }
+
   private handleOpen(): void {
     this._connected = true;
+    this._connectionStateListener?.call(this, true);
     this._eventEmitter.emit('socket_open');
     this._eventEmitter.emit('log', 'connection opened');
   }
@@ -109,8 +138,9 @@ export default class SoftPhoneWebSocket {
     const parsed: IWebSocketMessage = JSON.parse(message.data);
     const eventEmitter = this._eventEmitter;
 
-    if (parsed.type === WebSocketMessageType.Metadata && parsed.payload) {
+    if (parsed.type === WebSocketMessageType.Participants && parsed.payload) {
       this._participants = JSON.parse(parsed.payload);
+      this._participantStateListener?.call(this, this._participants);
       return;
     }
 
@@ -133,6 +163,7 @@ export default class SoftPhoneWebSocket {
 
   private handleClose() {
     this._connected = false;
+    this._connectionStateListener?.call(this, false);
     this._eventEmitter.emit('log', 'connection closed');
   }
 
