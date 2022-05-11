@@ -15,7 +15,6 @@ export default class SoftPhoneAudioContext {
 
   public async initializeAsync(): Promise<void> {
     if (!this._context) {
-
       // This connects a gain node to the audio context.
       const audioContext = new AudioContext({ sampleRate: 8000 });
       const gainNode = audioContext.createGain();
@@ -23,8 +22,7 @@ export default class SoftPhoneAudioContext {
       gainNode.gain.value = 3.0 / 4.0;
 
       // The audio worklet interfaces with the audio hardware.
-      const workletUrl = new URL('./bundled/SoftPhoneAudioWorklet.js', import.meta.url);
-      await audioContext.audioWorklet.addModule(workletUrl);
+      await audioContext.audioWorklet.addModule('./bundled/SoftPhoneAudioWorklet.js');
       const workletNode = new AudioWorkletNode(audioContext, 'softphone-audio-worklet') as IAudioWorkletNode;
       workletNode.port.onmessage = this.handleWorkletMessage.bind(this);
       workletNode.connect(gainNode);
