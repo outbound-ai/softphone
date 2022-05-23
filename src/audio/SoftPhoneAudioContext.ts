@@ -22,7 +22,8 @@ export default class SoftPhoneAudioContext {
       gainNode.gain.value = 3.0 / 4.0;
 
       // The audio worklet interfaces with the audio hardware.
-      await audioContext.audioWorklet.addModule('./bundled/SoftPhoneAudioWorklet.js');
+      const workletUrl = new URL('./bundled/SoftPhoneAudioWorklet.js', import.meta.url);
+      await audioContext.audioWorklet.addModule(workletUrl);
       const workletNode = new AudioWorkletNode(audioContext, 'softphone-audio-worklet') as IAudioWorkletNode;
       workletNode.port.onmessage = this.handleWorkletMessage.bind(this);
       workletNode.connect(gainNode);
