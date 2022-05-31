@@ -17,6 +17,6 @@ module.exports = {
   },
   output: {
     filename: 'SoftPhoneAudioWorklet.js',
-    path: path.resolve(__dirname, 'lib/audio/bundled'),
+    path: path.resolve(__dirname, 'lib/audio/softphoneAudioWorklet'),
   }
 };
