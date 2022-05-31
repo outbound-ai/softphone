@@ -1,3 +1,4 @@
+// import * as fs from 'fs';
 import EventEmitter from 'eventemitter3';
 import IWebSocketMessage from './IWebSocketMessage';
 import WebSocketMessageType from './WebSocketMessageType';
@@ -21,20 +22,26 @@ export default class SoftPhoneAudioContext {
       gainNode.connect(audioContext.destination);
       gainNode.gain.value = 3.0 / 4.0;
 
-      // The audio worklet interfaces with the audio hardware.
-      const workletUrl = new URL('./bundled/SoftPhoneAudioWorklet.js', import.meta.url);
-      await audioContext.audioWorklet.addModule(workletUrl);
-      const workletNode = new AudioWorkletNode(audioContext, 'softphone-audio-worklet') as IAudioWorkletNode;
-      workletNode.port.onmessage = this.handleWorkletMessage.bind(this);
-      workletNode.connect(gainNode);
+      const workletPath = `${process.env.PUBLIC_URL}/softphoneAudioWorklet/SoftPhoneAudioWorklet.js`;
 
-      // This connects the worklet to the microphone.
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-      const sourceNode = audioContext.createMediaStreamSource(mediaStream);
-      sourceNode.connect(workletNode);
+      try {
+        await audioContext.audioWorklet.addModule(workletPath);
+        const workletNode = new AudioWorkletNode(audioContext, 'softphone-audio-worklet') as IAudioWorkletNode;
+        workletNode.port.onmessage = this.handleWorkletMessage.bind(this);
+        workletNode.connect(gainNode);
 
-      this._context = audioContext;
-      this._worklet = workletNode;
+        // This connects the worklet to the microphone.
+        const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        const sourceNode = audioContext.createMediaStreamSource(mediaStream);
+        sourceNode.connect(workletNode);
+
+        this._context = audioContext;
+        this._worklet = workletNode;
+      } catch (error) {
+        throw Error(
+          '\r\n/softphoneAudioWorklet/SoftPhoneAudioWorklet.js missing from the public/ folder, please run:\r\n\r\ncp -r node_modules/@outbound-ai/softphone/lib/audio/softphoneAudioWorklet public/\r\n\r\n from the root directory of your React app to copy the required files'
+        );
+      }
     }
   }
 
