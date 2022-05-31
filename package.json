@@ -1,12 +1,12 @@
 {
   "name": "@outbound-ai/softphone",
-  "version": "2.0.0-rc1",
+  "version": "2.0.0",
   "description": "",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\" --no-error-on-unmatched-pattern",
-    "build": "tsc; webpack --mode development",
+    "build": "tsc && webpack --mode development",
     "test": "jest --config jestconfig.json",
     "lint": "eslint . --ext .ts",
     "demo": "node ./server.js"
