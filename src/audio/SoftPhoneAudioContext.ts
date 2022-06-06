@@ -8,6 +8,8 @@ export default class SoftPhoneAudioContext {
   private _eventEmitter: EventEmitter;
   private _context?: AudioContext;
   private _worklet?: IAudioWorkletNode;
+  private _gainNode?: GainNode;
+  private _audioMuted = false;
 
   constructor(eventEmitter: EventEmitter) {
     eventEmitter.on(WebSocketMessageType.InboundAudio, this.handleInboundAudio.bind(this));
@@ -37,6 +39,7 @@ export default class SoftPhoneAudioContext {
 
         this._context = audioContext;
         this._worklet = workletNode;
+        this._gainNode = gainNode;
       } catch (error) {
         throw Error(
           '\r\n/softphoneAudioWorklet/SoftPhoneAudioWorklet.js missing from the public/ folder, please run:\r\n\r\ncp -r node_modules/@outbound-ai/softphone/lib/audio/softphoneAudioWorklet public/\r\n\r\n from the root directory of your React app to copy the required files'
@@ -47,6 +50,10 @@ export default class SoftPhoneAudioContext {
 
   public get muted() {
     return this._muted;
+  }
+
+  public get audioMuted() {
+    return this._audioMuted;
   }
 
   public mute() {
@@ -62,6 +69,21 @@ export default class SoftPhoneAudioContext {
       const muteParameter = this._worklet.parameters.get('muted');
       muteParameter.setValueAtTime(0, this._context.currentTime);
       this._muted = false;
+    }
+  }
+
+  /**
+   *
+   * @param volume number between 0 and 1
+   */
+  public setAudioVolume(volume: number) {
+    if (volume < 0 || volume > 1) return;
+
+    if (this._gainNode) {
+      this._gainNode.gain.value = volume;
+
+      if (volume === 0) this._audioMuted = true;
+      else if (this._audioMuted === true) this._audioMuted = false;
     }
   }
 
