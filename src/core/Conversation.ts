@@ -22,32 +22,32 @@ export default class Conversation {
     return this._socket.connected;
   }
 
-  get muted(): boolean {
-    return this._audio.muted;
+  get inputMuted(): boolean {
+    return this._audio.inputMuted;
   }
 
   get audio() {
     return this._audio;
   }
 
-  get audioMuted(): boolean {
-    return this._audio.audioMuted;
+  get outputMuted(): boolean {
+    return this._audio.outputMuted;
   }
 
-  public mute(): void {
-    this._audio.mute();
+  public muteInput(): void {
+    this._audio.muteInput(true);
   }
 
-  public unmute(): void {
-    this._audio.unmute();
+  public unmuteInput(): void {
+    this._audio.muteInput(false);
   }
 
-  public muteAudio(): void {
-    this._audio.setAudioVolume(0);
+  public muteOutput(): void {
+    this._audio.muteOutput(true);
   }
 
-  public unmuteAudio(): void {
-    this._audio.setAudioVolume(3.0 / 4.0);
+  public unmuteOutput(): void {
+    this._audio.muteOutput(false);
   }
 
   public synthesizeSpeech(text: string) {

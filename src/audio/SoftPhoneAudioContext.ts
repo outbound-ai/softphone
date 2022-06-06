@@ -4,7 +4,7 @@ import IWebSocketMessage from './IWebSocketMessage';
 import WebSocketMessageType from './WebSocketMessageType';
 
 export default class SoftPhoneAudioContext {
-  private _muted = true;
+  private _inputMuted = true;
   private _eventEmitter: EventEmitter;
   private _context?: AudioContext;
   private _worklet?: IAudioWorkletNode;
@@ -48,42 +48,29 @@ export default class SoftPhoneAudioContext {
     }
   }
 
-  public get muted() {
-    return this._muted;
+  public get inputMuted() {
+    return this._inputMuted;
   }
 
-  public get audioMuted() {
+  public get outputMuted() {
     return this._audioMuted;
   }
 
-  public mute() {
+  public muteInput(mute: boolean) {
     if (this._context && this._worklet) {
+      const value = mute ? 1 : 0;
       const muteParameter = this._worklet.parameters.get('muted');
-      muteParameter.setValueAtTime(1, this._context.currentTime);
-      this._muted = true;
+      muteParameter.setValueAtTime(value, this._context.currentTime);
+      this._inputMuted = mute;
     }
   }
 
-  public unmute() {
-    if (this._context && this._worklet) {
-      const muteParameter = this._worklet.parameters.get('muted');
-      muteParameter.setValueAtTime(0, this._context.currentTime);
-      this._muted = false;
-    }
-  }
-
-  /**
-   *
-   * @param volume number between 0 and 1
-   */
-  public setAudioVolume(volume: number) {
-    if (volume < 0 || volume > 1) return;
-
+  public muteOutput(mute: boolean) {
     if (this._gainNode) {
-      this._gainNode.gain.value = volume;
+      const value = mute ? 0 : 3.0 / 4.0;
 
-      if (volume === 0) this._audioMuted = true;
-      else if (this._audioMuted === true) this._audioMuted = false;
+      this._gainNode.gain.value = value;
+      this._audioMuted = mute;
     }
   }
 
