@@ -1,6 +1,6 @@
 {
   "name": "@outbound-ai/softphone",
-  "version": "2.0.0",
+  "version": "2.0.0-5b3c254",
   "description": "",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
