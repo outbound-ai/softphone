@@ -9,7 +9,7 @@ export default class SoftPhoneAudioContext {
   private _context?: AudioContext;
   private _worklet?: IAudioWorkletNode;
   private _gainNode?: GainNode;
-  private _audioMuted = false;
+  private _outputMuted = false;
 
   constructor(eventEmitter: EventEmitter) {
     eventEmitter.on(WebSocketMessageType.InboundAudio, this.handleInboundAudio.bind(this));
@@ -53,7 +53,7 @@ export default class SoftPhoneAudioContext {
   }
 
   public get outputMuted() {
-    return this._audioMuted;
+    return this._outputMuted;
   }
 
   public muteInput(mute: boolean) {
@@ -70,7 +70,7 @@ export default class SoftPhoneAudioContext {
       const value = mute ? 0 : 3.0 / 4.0;
 
       this._gainNode.gain.value = value;
-      this._audioMuted = mute;
+      this._outputMuted = mute;
     }
   }
 
