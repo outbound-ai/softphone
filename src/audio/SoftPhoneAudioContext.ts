@@ -4,10 +4,12 @@ import IWebSocketMessage from './IWebSocketMessage';
 import WebSocketMessageType from './WebSocketMessageType';
 
 export default class SoftPhoneAudioContext {
-  private _muted = true;
+  private _inputMuted = true;
   private _eventEmitter: EventEmitter;
   private _context?: AudioContext;
   private _worklet?: IAudioWorkletNode;
+  private _gainNode?: GainNode;
+  private _outputMuted = false;
 
   constructor(eventEmitter: EventEmitter) {
     eventEmitter.on(WebSocketMessageType.InboundAudio, this.handleInboundAudio.bind(this));
@@ -37,6 +39,7 @@ export default class SoftPhoneAudioContext {
 
         this._context = audioContext;
         this._worklet = workletNode;
+        this._gainNode = gainNode;
       } catch (error) {
         throw Error(
           '\r\n/softphoneAudioWorklet/SoftPhoneAudioWorklet.js missing from the public/ folder, please run:\r\n\r\ncp -r node_modules/@outbound-ai/softphone/lib/audio/softphoneAudioWorklet public/\r\n\r\n from the root directory of your React app to copy the required files'
@@ -45,23 +48,29 @@ export default class SoftPhoneAudioContext {
     }
   }
 
-  public get muted() {
-    return this._muted;
+  public get inputMuted() {
+    return this._inputMuted;
   }
 
-  public mute() {
+  public get outputMuted() {
+    return this._outputMuted;
+  }
+
+  public muteInput(mute: boolean) {
     if (this._context && this._worklet) {
+      const value = mute ? 1 : 0;
       const muteParameter = this._worklet.parameters.get('muted');
-      muteParameter.setValueAtTime(1, this._context.currentTime);
-      this._muted = true;
+      muteParameter.setValueAtTime(value, this._context.currentTime);
+      this._inputMuted = mute;
     }
   }
 
-  public unmute() {
-    if (this._context && this._worklet) {
-      const muteParameter = this._worklet.parameters.get('muted');
-      muteParameter.setValueAtTime(0, this._context.currentTime);
-      this._muted = false;
+  public muteOutput(mute: boolean) {
+    if (this._gainNode) {
+      const value = mute ? 0 : 3.0 / 4.0;
+
+      this._gainNode.gain.value = value;
+      this._outputMuted = mute;
     }
   }
 

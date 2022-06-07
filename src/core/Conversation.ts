@@ -1,4 +1,8 @@
-import SoftPhoneWebSocket, { ConnectionStateListener, ParticipantStateListener, TranscriptListener } from '../audio/SoftPhoneWebSocket';
+import SoftPhoneWebSocket, {
+  ConnectionStateListener,
+  ParticipantStateListener,
+  TranscriptListener
+} from '../audio/SoftPhoneWebSocket';
 import SoftPhoneAudioContext from '../audio/SoftPhoneAudioContext';
 
 export default class Conversation {
@@ -18,16 +22,32 @@ export default class Conversation {
     return this._socket.connected;
   }
 
-  get muted(): boolean {
-    return this._audio.muted;
+  get inputMuted(): boolean {
+    return this._audio.inputMuted;
   }
 
-  public mute(): void {
-    this._audio.mute();
+  get audio() {
+    return this._audio;
   }
 
-  public unmute(): void {
-    this._audio.unmute();
+  get outputMuted(): boolean {
+    return this._audio.outputMuted;
+  }
+
+  public muteInput(): void {
+    this._audio.muteInput(true);
+  }
+
+  public unmuteInput(): void {
+    this._audio.muteInput(false);
+  }
+
+  public muteOutput(): void {
+    this._audio.muteOutput(true);
+  }
+
+  public unmuteOutput(): void {
+    this._audio.muteOutput(false);
   }
 
   public synthesizeSpeech(text: string) {

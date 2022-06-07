@@ -1,12 +1,13 @@
 {
   "name": "@outbound-ai/softphone",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\" --no-error-on-unmatched-pattern",
-    "build": "tsc && webpack --mode development",
+    "build": "tsc && webpack --mode production",
+    "build-dev": "tsc && webpack --mode development",
     "test": "jest --config jestconfig.json",
     "lint": "eslint . --ext .ts",
     "demo": "node ./server.js"
@@ -31,7 +32,6 @@
     "lib/**/*"
   ],
   "dependencies": {
-    "@outbound-ai/softphone": "^1.0.0",
     "abab": "^2.0.5",
     "eventemitter3": "^4.0.7"
   }
