@@ -4,6 +4,7 @@ import WebSocketMessageType from './WebSocketMessageType';
 
 export type ConnectionStateListener = (connected: boolean) => void;
 export type ParticipantStateListener = (participants: Record<string, string>) => void;
+export type HoldForHumanListener = (participantId: string, participantType: string, message: string) => void;
 export type TranscriptListener = (participantId: string, participantType: string, message: string) => void;
 
 export default class SoftPhoneWebSocket {
@@ -14,6 +15,7 @@ export default class SoftPhoneWebSocket {
   private _participants: Record<string, string> = {};
   private _connectionStateListener?: ConnectionStateListener;
   private _participantStateListener?: ParticipantStateListener;
+  private _holdForHumanListener?: TranscriptListener;
   private _transcriptListener?: TranscriptListener;
 
   constructor(hostname: string, eventEmitter: EventEmitter) {
@@ -83,6 +85,10 @@ export default class SoftPhoneWebSocket {
 
   public set participantStateListener(listener: ParticipantStateListener) {
     this._participantStateListener = listener;
+  }
+
+  public set holdForHumanListener(listener: HoldForHumanListener) {
+    this._holdForHumanListener = listener;
   }
 
   public set transcriptListener(listener: TranscriptListener) {
