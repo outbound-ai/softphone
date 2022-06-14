@@ -144,6 +144,8 @@ export default class SoftPhoneWebSocket {
     const parsed: IWebSocketMessage = JSON.parse(message.data);
     const eventEmitter = this._eventEmitter;
 
+    if (parsed.type !== WebSocketMessageType.InboundAudio) console.log('parsed', parsed);
+
     if (parsed.type === WebSocketMessageType.Participants && parsed.payload) {
       this._participants = JSON.parse(parsed.payload);
       this._participantStateListener?.call(this, this._participants);
@@ -151,9 +153,16 @@ export default class SoftPhoneWebSocket {
     }
 
     if (parsed.type === WebSocketMessageType.Transcript) {
-
       if (this._transcriptListener && parsed.participantId && parsed.participantType && parsed.payload) {
         this._transcriptListener(parsed.participantId, parsed.participantType, parsed.payload);
+      }
+
+      return;
+    }
+
+    if (parsed.type === WebSocketMessageType.HoldForHuman) {
+      if (this._holdForHumanListener && parsed.participantId && parsed.participantType && parsed.payload) {
+        this._holdForHumanListener(parsed.participantId, parsed.participantType, parsed.payload);
       }
 
       return;

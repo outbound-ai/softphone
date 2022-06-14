@@ -7,4 +7,5 @@ export default class WebSocketMessageType {
   static Hangup = 'Hangup';
   static Participants = 'Participants';
   static RemoveParticipant = 'RemoveParticipant';
+  static HoldForHuman = 'HoldForHuman';
 }
