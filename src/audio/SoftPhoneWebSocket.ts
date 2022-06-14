@@ -144,8 +144,6 @@ export default class SoftPhoneWebSocket {
     const parsed: IWebSocketMessage = JSON.parse(message.data);
     const eventEmitter = this._eventEmitter;
 
-    if (parsed.type !== WebSocketMessageType.InboundAudio) console.log('parsed', parsed);
-
     if (parsed.type === WebSocketMessageType.Participants && parsed.payload) {
       this._participants = JSON.parse(parsed.payload);
       this._participantStateListener?.call(this, this._participants);
