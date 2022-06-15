@@ -158,14 +158,6 @@ export default class SoftPhoneWebSocket {
       return;
     }
 
-    if (parsed.type === WebSocketMessageType.HoldForHuman) {
-      if (this._holdForHumanListener && parsed.participantId && parsed.participantType && parsed.payload) {
-        this._holdForHumanListener(parsed.participantId, parsed.participantType, parsed.payload);
-      }
-
-      return;
-    }
-
     if (parsed.type === WebSocketMessageType.InboundAudio) {
       eventEmitter.emit(WebSocketMessageType.InboundAudio, parsed);
       return;
