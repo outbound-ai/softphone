@@ -1,6 +1,7 @@
 import SoftPhoneWebSocket, {
   ConnectionStateListener,
   ParticipantStateListener,
+  HoldForHumanListener,
   TranscriptListener
 } from '../audio/SoftPhoneWebSocket';
 import SoftPhoneAudioContext from '../audio/SoftPhoneAudioContext';
@@ -80,5 +81,9 @@ export default class Conversation {
 
   public set onTranscriptAvailable(listener: TranscriptListener) {
     this._socket.transcriptListener = listener;
+  }
+  
+  public set onHoldForHumanEvent(listener: HoldForHumanListener) {
+    this._socket.holdForHumanListener = listener;
   }
 }

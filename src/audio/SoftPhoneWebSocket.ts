@@ -4,6 +4,7 @@ import WebSocketMessageType from './WebSocketMessageType';
 
 export type ConnectionStateListener = (connected: boolean) => void;
 export type ParticipantStateListener = (participants: Record<string, string>) => void;
+export type HoldForHumanListener = (message: string) => void;
 export type TranscriptListener = (participantId: string, participantType: string, message: string) => void;
 
 export default class SoftPhoneWebSocket {
@@ -14,6 +15,7 @@ export default class SoftPhoneWebSocket {
   private _participants: Record<string, string> = {};
   private _connectionStateListener?: ConnectionStateListener;
   private _participantStateListener?: ParticipantStateListener;
+  private _holdForHumanListener?: HoldForHumanListener;
   private _transcriptListener?: TranscriptListener;
 
   constructor(hostname: string, eventEmitter: EventEmitter) {
@@ -85,6 +87,10 @@ export default class SoftPhoneWebSocket {
     this._participantStateListener = listener;
   }
 
+  public set holdForHumanListener(listener: HoldForHumanListener) {
+    this._holdForHumanListener = listener;
+  }
+
   public set transcriptListener(listener: TranscriptListener) {
     this._transcriptListener = listener;
   }
@@ -137,7 +143,7 @@ export default class SoftPhoneWebSocket {
   private handleMessage(message: MessageEvent): void {
     const parsed: IWebSocketMessage = JSON.parse(message.data);
     const eventEmitter = this._eventEmitter;
-
+    
     if (parsed.type === WebSocketMessageType.Participants && parsed.payload) {
       this._participants = JSON.parse(parsed.payload);
       this._participantStateListener?.call(this, this._participants);
@@ -145,7 +151,6 @@ export default class SoftPhoneWebSocket {
     }
 
     if (parsed.type === WebSocketMessageType.Transcript) {
-
       if (this._transcriptListener && parsed.participantId && parsed.participantType && parsed.payload) {
         this._transcriptListener(parsed.participantId, parsed.participantType, parsed.payload);
       }
@@ -155,6 +160,19 @@ export default class SoftPhoneWebSocket {
 
     if (parsed.type === WebSocketMessageType.InboundAudio) {
       eventEmitter.emit(WebSocketMessageType.InboundAudio, parsed);
+      return;
+    }
+
+    if (parsed.type === WebSocketMessageType.HoldForHuman) {
+      eventEmitter.emit(WebSocketMessageType.HoldForHuman, parsed.payload);
+      if(this._holdForHumanListener && parsed.payload) {
+        this._holdForHumanListener(parsed.payload);
+      }
+      return;
+    }
+
+    if (parsed.type === WebSocketMessageType.TranscriptEventDetection) {
+      eventEmitter.emit(WebSocketMessageType.TranscriptEventDetection, 'event detection available');
       return;
     }
 
