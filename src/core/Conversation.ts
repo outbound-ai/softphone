@@ -31,6 +31,10 @@ export default class Conversation {
     return this._audio;
   }
 
+  get audioCtx() {
+    return this._audio.audioCtx;
+  }
+
   get outputMuted(): boolean {
     return this._audio.outputMuted;
   }
@@ -82,7 +86,7 @@ export default class Conversation {
   public set onTranscriptAvailable(listener: TranscriptListener) {
     this._socket.transcriptListener = listener;
   }
-  
+
   public set onHoldForHumanEvent(listener: HoldForHumanListener) {
     this._socket.holdForHumanListener = listener;
   }
