@@ -56,6 +56,10 @@ export default class SoftPhoneAudioContext {
     return this._outputMuted;
   }
 
+  public get audioCtx() {
+    return this._context;
+  }
+
   public muteInput(mute: boolean) {
     if (this._context && this._worklet) {
       const value = mute ? 1 : 0;
