@@ -68,6 +68,7 @@ export default class Conversation {
   }
 
   public disconnect() {
+    this._audio.disconnectMediaStream();
     this._socket.disconnect();
   }
 
