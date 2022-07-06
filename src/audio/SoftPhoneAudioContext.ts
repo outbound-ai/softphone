@@ -10,6 +10,7 @@ export default class SoftPhoneAudioContext {
   private _worklet?: IAudioWorkletNode;
   private _gainNode?: GainNode;
   private _outputMuted = false;
+  private _mediaStream?: MediaStream;
 
   constructor(eventEmitter: EventEmitter) {
     eventEmitter.on(WebSocketMessageType.InboundAudio, this.handleInboundAudio.bind(this));
@@ -33,8 +34,8 @@ export default class SoftPhoneAudioContext {
         workletNode.connect(gainNode);
 
         // This connects the worklet to the microphone.
-        const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-        const sourceNode = audioContext.createMediaStreamSource(mediaStream);
+        this._mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        const sourceNode = audioContext.createMediaStreamSource(this._mediaStream);
         sourceNode.connect(workletNode);
 
         this._context = audioContext;
@@ -58,6 +59,10 @@ export default class SoftPhoneAudioContext {
 
   public get audioCtx() {
     return this._context;
+  }
+
+  public disconnectMediaStream() {
+    this._mediaStream?.getTracks().forEach((track) => track.stop());
   }
 
   public muteInput(mute: boolean) {
