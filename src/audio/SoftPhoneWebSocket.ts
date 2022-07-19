@@ -33,20 +33,14 @@ export default class SoftPhoneWebSocket {
     const eventEmitter = this._eventEmitter;
     const url = `${hostname}/api/v1/jobs/${jobId}/browser`;
     eventEmitter.emit('log', `attempting connection to "${url}"`);
-    eventEmitter.emit('log', `access token "${accessToken}"`);
 
-    try {
-      const webSocket = new WebSocket(url, ['access_token', accessToken]);
-      webSocket.addEventListener('open', this.handleOpen.bind(this));
-      webSocket.addEventListener('message', this.handleMessage.bind(this));
-      webSocket.addEventListener('close', this.handleClose.bind(this));
+    const webSocket = new WebSocket(url, ['access_token', accessToken]);
+    webSocket.addEventListener('open', this.handleOpen.bind(this));
+    webSocket.addEventListener('message', this.handleMessage.bind(this));
+    webSocket.addEventListener('close', this.handleClose.bind(this));
 
-      this._socket = webSocket;
-      this._connected = true;
-    } catch (error) {
-      console.log('error', error);
-      eventEmitter.emit('log', `error "${error}"`);
-    }
+    this._socket = webSocket;
+    this._connected = true;
   }
 
   public participants() {
