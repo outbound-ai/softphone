@@ -28,13 +28,13 @@ export default class SoftPhoneWebSocket {
     return this._connected;
   }
 
-  public connect(jobId: string) {
+  public connect(jobId: string, accessToken: string) {
     const hostname = this._hostname;
     const eventEmitter = this._eventEmitter;
     const url = `${hostname}/api/v1/jobs/${jobId}/browser`;
     eventEmitter.emit('log', `attempting connection to "${url}"`);
 
-    const webSocket = new WebSocket(url);
+    const webSocket = new WebSocket(url, ['access_token', accessToken]);
     webSocket.addEventListener('open', this.handleOpen.bind(this));
     webSocket.addEventListener('message', this.handleMessage.bind(this));
     webSocket.addEventListener('close', this.handleClose.bind(this));
@@ -143,7 +143,7 @@ export default class SoftPhoneWebSocket {
   private handleMessage(message: MessageEvent): void {
     const parsed: IWebSocketMessage = JSON.parse(message.data);
     const eventEmitter = this._eventEmitter;
-    
+
     if (parsed.type === WebSocketMessageType.Participants && parsed.payload) {
       this._participants = JSON.parse(parsed.payload);
       this._participantStateListener?.call(this, this._participants);
@@ -165,7 +165,7 @@ export default class SoftPhoneWebSocket {
 
     if (parsed.type === WebSocketMessageType.HoldForHuman) {
       eventEmitter.emit(WebSocketMessageType.HoldForHuman, parsed.payload);
-      if(this._holdForHumanListener && parsed.payload) {
+      if (this._holdForHumanListener && parsed.payload) {
         this._holdForHumanListener(parsed.payload);
       }
       return;

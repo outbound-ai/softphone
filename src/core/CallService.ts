@@ -14,14 +14,14 @@ export default class CallService {
     this._hostname = hostname;
   }
 
-  async getConversationAsync(jobId: string): Promise<Conversation> {
+  async getConversationAsync(jobId: string, accessToken: string): Promise<Conversation> {
     if (CallService.SoftphoneAudioContext == null) {
       CallService.SoftphoneAudioContext = new SoftPhoneAudioContext(CallService.EventEmitter);
       await CallService.SoftphoneAudioContext.initializeAsync();
     }
 
     const webSocket = new SoftphoneWebSocket(this._hostname, CallService.EventEmitter);
-    webSocket.connect(jobId);
+    webSocket.connect(jobId, accessToken);
     const conversation = new Conversation(webSocket, CallService.SoftphoneAudioContext);
     return Promise.resolve(conversation);
   }
