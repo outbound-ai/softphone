@@ -21,32 +21,40 @@ export default class SoftPhoneAudioContext {
     if (!this._context) {
       // This connects a gain node to the audio context.
       const audioContext = new AudioContext({ sampleRate: 8000 });
-      const gainNode = audioContext.createGain();
-      gainNode.connect(audioContext.destination);
-      gainNode.gain.value = 3.0 / 4.0;
-
-      const workletPath = `${process.env.PUBLIC_URL}/softphoneAudioWorklet/SoftPhoneAudioWorklet.js`;
-
-      try {
-        await audioContext.audioWorklet.addModule(workletPath);
-        const workletNode = new AudioWorkletNode(audioContext, 'softphone-audio-worklet') as IAudioWorkletNode;
-        workletNode.port.onmessage = this.handleWorkletMessage.bind(this);
-        workletNode.connect(gainNode);
-
-        // This connects the worklet to the microphone.
-        this._mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-        const sourceNode = audioContext.createMediaStreamSource(this._mediaStream);
-        sourceNode.connect(workletNode);
-
-        this._context = audioContext;
-        this._worklet = workletNode;
-        this._gainNode = gainNode;
-      } catch (error) {
-        throw Error(
-          '\r\n/softphoneAudioWorklet/SoftPhoneAudioWorklet.js missing from the public/ folder, please run:\r\n\r\ncp -r node_modules/@outbound-ai/softphone/lib/audio/softphoneAudioWorklet public/\r\n\r\n from the root directory of your React app to copy the required files'
-        );
+      this._context = audioContext;
+      
+      if (audioContext.state !== 'suspended') {
+        try {
+          await this.createAudioWorklet()
+        } catch (error) {
+          throw Error(
+            '\r\n/softphoneAudioWorklet/SoftPhoneAudioWorklet.js missing from the public/ folder, please run:\r\n\r\ncp -r node_modules/@outbound-ai/softphone/lib/audio/softphoneAudioWorklet public/\r\n\r\n from the root directory of your React app to copy the required files'
+          );
+        }
       }
     }
+  }
+
+  public async createAudioWorklet() {
+    if (!this._context) return;
+
+    const gainNode = this._context.createGain();
+    gainNode.connect(this._context.destination);
+    gainNode.gain.value = 3.0 / 4.0;
+
+    const workletPath = `${process.env.PUBLIC_URL}/softphoneAudioWorklet/SoftPhoneAudioWorklet.js`;
+    await this._context.audioWorklet.addModule(workletPath);
+    const workletNode = new AudioWorkletNode(this._context, 'softphone-audio-worklet') as IAudioWorkletNode;
+    workletNode.port.onmessage = this.handleWorkletMessage.bind(this);
+    workletNode.connect(gainNode);
+
+    // This connects the worklet to the microphone.
+    this._mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    const sourceNode = this._context.createMediaStreamSource(this._mediaStream);
+    sourceNode.connect(workletNode);
+
+    this._worklet = workletNode;
+    this._gainNode = gainNode;
   }
 
   public get inputMuted() {
@@ -59,10 +67,6 @@ export default class SoftPhoneAudioContext {
 
   public get audioCtx() {
     return this._context;
-  }
-
-  public disconnectMediaStream() {
-    this._mediaStream?.getTracks().forEach((track) => track.stop());
   }
 
   public muteInput(mute: boolean) {
