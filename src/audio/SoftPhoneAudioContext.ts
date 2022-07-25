@@ -87,14 +87,9 @@ export default class SoftPhoneAudioContext {
     }
   }
 
-
-
   public enableMicroPhone(enable: boolean) {
-    if(this._mediaStream){
-      this._mediaStream.getAudioTracks()[0].enabled = enable;
-    }
+    this._mediaStream?.getAudioTracks().forEach((track) => {console.log(track); track.enabled = enable});
   }
-
 
   private handleInboundAudio(message: IWebSocketMessage) {
     if (this._worklet) {
