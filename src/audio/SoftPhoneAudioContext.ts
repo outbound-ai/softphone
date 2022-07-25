@@ -87,6 +87,10 @@ export default class SoftPhoneAudioContext {
     }
   }
 
+  public disconnectMediaStream() {
+    this._mediaStream?.getTracks().forEach((track) => track.muted);
+  }
+
   private handleInboundAudio(message: IWebSocketMessage) {
     if (this._worklet) {
       this._worklet.port.postMessage(message);
