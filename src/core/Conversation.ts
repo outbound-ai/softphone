@@ -44,6 +44,7 @@ export default class Conversation {
   }
 
   public unmuteInput(): void {
+    this._audio.enableMicroPhone(true);
     this._audio.muteInput(false);
   }
 
@@ -68,6 +69,7 @@ export default class Conversation {
   }
 
   public disconnect() {
+    this._audio.enableMicroPhone(false);
     this._socket.disconnect();
   }
 
