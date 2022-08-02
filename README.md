@@ -52,3 +52,24 @@ conversation.onTranscriptAvailable += (participantId, message) => {
 > npm run serve
 > open http://localhost:9000/call-service-client/
 ```
+
+# Development Cycle
+The Demonstration Application can be used for development.
+
+Sometimes it's handy to use a different client, like the `aquarius` UI, which consumes the package.
+To consume the package without publishing it, link a local instance.
+
+See the [aquarius readme](https://github.com/outbound-ai/aquarius#readme) for help with consuming this package.
+
+## Link local package
+
+`aquarius` uses `yarn` so this example uses `yarn` too.
+
+- Build the softphone package:
+  - `~/source/repos/Outbound.AI/SoftPhone $ yarn install`
+  - `~/source/repos/Outbound.AI/SoftPhone $ yarn run build`
+- Provide `yarn link` with the package
+  - `~/source/repos/Outbound.AI/SoftPhone $ yarn link`
+- Consume the package in `aquarius`
+  - `~/source/repos/Outbound.AI/aquarius/source $ yarn link "@outbound-ai/softphone"`
+  - `~/source/repos/Outbound.AI/aquarius/source $ yarn install --force`

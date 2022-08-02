@@ -117,6 +117,22 @@ export default class SoftPhoneWebSocket {
     }
   }
 
+  public agentTakeOver() {
+    const socket = this._socket;
+
+    if (socket && socket.readyState === 1) {
+      const message: IWebSocketMessage = {
+        sequenceNumber: 0,
+        type: WebSocketMessageType.AgentTakeOver,
+        payload: null,
+        participantId: null,
+        participantType: null
+      };
+
+      socket.send(JSON.stringify(message));
+    }
+  }
+
   public removeParticipant(participantId: string) {
     const socket = this._socket;
 
