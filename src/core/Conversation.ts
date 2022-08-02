@@ -64,6 +64,10 @@ export default class Conversation {
     this._socket.synthesizeTouchTones(sequence);
   }
 
+  public agentTakeOver() {
+    this._socket.agentTakeOver();
+  }
+
   public removeParticipant(participantId: string) {
     this._socket.removeParticipant(participantId);
   }
