@@ -10,4 +10,5 @@ export default class WebSocketMessageType {
   static Participants = 'Participants';
   static RemoveParticipant = 'RemoveParticipant';
   static AgentTakeOver = 'AgentTakeOver';
+  static ConnectionHealth = 'ConnectionHealth';
 }
