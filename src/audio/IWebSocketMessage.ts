@@ -4,4 +4,5 @@ export default interface IWebSocketMessage {
   sequenceNumber: number | null;
   participantId: string | null;
   participantType: string | null;
+  utcNow?: string;
 }
