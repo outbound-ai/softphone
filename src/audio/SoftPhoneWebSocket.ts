@@ -48,35 +48,23 @@ export default class SoftPhoneWebSocket {
   }
 
   public synthesizeSpeech(text: string) {
-    const socket = this._socket;
-
-    if (socket && socket.readyState === 1) {
-      const message: IWebSocketMessage = {
-        sequenceNumber: 0,
-        type: WebSocketMessageType.SynthesizeSpeech,
-        payload: text,
-        participantId: null,
-        participantType: null
-      };
-
-      socket.send(JSON.stringify(message));
-    }
+    this.sendMessage({
+      sequenceNumber: 0,
+      type: WebSocketMessageType.SynthesizeSpeech,
+      payload: text,
+      participantId: null,
+      participantType: null
+    });
   }
 
   public synthesizeTouchTones(digits: string) {
-    const socket = this._socket;
-
-    if (socket && socket.readyState === 1) {
-      const message: IWebSocketMessage = {
-        sequenceNumber: 0,
-        type: WebSocketMessageType.SynthesizeTouchTone,
-        payload: digits,
-        participantId: null,
-        participantType: null
-      };
-
-      socket.send(JSON.stringify(message));
-    }
+    this.sendMessage({
+      sequenceNumber: 0,
+      type: WebSocketMessageType.SynthesizeTouchTone,
+      payload: digits,
+      participantId: null,
+      participantType: null
+    });
   }
 
   public set connectionStateListener(listener: ConnectionStateListener) {
@@ -102,51 +90,33 @@ export default class SoftPhoneWebSocket {
   }
 
   public hangup() {
-    const socket = this._socket;
-
-    if (socket && socket.readyState === 1) {
-      const message: IWebSocketMessage = {
-        sequenceNumber: 0,
-        type: WebSocketMessageType.Hangup,
-        payload: null,
-        participantId: null,
-        participantType: null
-      };
-
-      socket.send(JSON.stringify(message));
-    }
+    this.sendMessage({
+      sequenceNumber: 0,
+      type: WebSocketMessageType.Hangup,
+      payload: null,
+      participantId: null,
+      participantType: null
+    });
   }
 
   public agentTakeOver() {
-    const socket = this._socket;
-
-    if (socket && socket.readyState === 1) {
-      const message: IWebSocketMessage = {
-        sequenceNumber: 0,
-        type: WebSocketMessageType.AgentTakeOver,
-        payload: null,
-        participantId: null,
-        participantType: null
-      };
-
-      socket.send(JSON.stringify(message));
-    }
+    this.sendMessage({
+      sequenceNumber: 0,
+      type: WebSocketMessageType.AgentTakeOver,
+      payload: null,
+      participantId: null,
+      participantType: null
+    });
   }
 
   public removeParticipant(participantId: string) {
-    const socket = this._socket;
-
-    if (socket && socket.readyState === 1) {
-      const message: IWebSocketMessage = {
+    this.sendMessage({
         sequenceNumber: 0,
         type: WebSocketMessageType.RemoveParticipant,
         payload: participantId,
         participantId: null,
         participantType: null
-      };
-
-      socket.send(JSON.stringify(message));
-    }
+      });
   }
 
   private handleOpen(): void {
@@ -192,6 +162,17 @@ export default class SoftPhoneWebSocket {
       return;
     }
 
+    if (parsed.type === WebSocketMessageType.ConnectionHealth) {
+      const message: IWebSocketMessage = {
+        sequenceNumber: parsed.sequenceNumber,
+        type: WebSocketMessageType.ConnectionHealth,
+        payload: parsed.payload,
+        participantId: parsed.participantId,
+        participantType: parsed.participantType,
+      }
+      this.sendMessage(message);
+    }
+
     eventEmitter.emit('log', `unrecognized message: ${message.data}`);
   }
 
@@ -202,9 +183,14 @@ export default class SoftPhoneWebSocket {
   }
 
   private handleOutboundAudio(message: IWebSocketMessage) {
+    this.sendMessage(message);
+  }
+
+  private sendMessage(message: IWebSocketMessage){
     const socket = this._socket;
 
     if (socket && socket.readyState === 1) {
+      message.utcNow = new Date().toISOString();
       socket.send(JSON.stringify(message));
     }
   }
