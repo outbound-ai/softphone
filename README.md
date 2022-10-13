@@ -73,3 +73,4 @@ See the [aquarius readme](https://github.com/outbound-ai/aquarius#readme) for he
 - Consume the package in `aquarius`
   - `~/source/repos/Outbound.AI/aquarius/source $ yarn link "@outbound-ai/softphone"`
   - `~/source/repos/Outbound.AI/aquarius/source $ yarn install --force`
+  
