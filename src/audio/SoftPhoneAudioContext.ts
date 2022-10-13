@@ -27,6 +27,7 @@ export default class SoftPhoneAudioContext {
         try {
           await this.createAudioWorklet()
         } catch (error) {
+          console.error(error)
           throw Error(
             '\r\n/softphoneAudioWorklet/SoftPhoneAudioWorklet.js missing from the public/ folder, please run:\r\n\r\ncp -r node_modules/@outbound-ai/softphone/lib/audio/softphoneAudioWorklet public/\r\n\r\n from the root directory of your React app to copy the required files'
           );
