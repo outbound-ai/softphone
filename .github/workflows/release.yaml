@@ -2,7 +2,7 @@ name: Release NPM Package
 on:
   push:
     branches:
-      - BranchVersion_6.1.1
+      - main
 jobs:
   verify-package-build:
     runs-on: 
