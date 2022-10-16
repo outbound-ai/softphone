@@ -61,7 +61,26 @@ To consume the package without publishing it, link a local instance.
 
 See the [aquarius readme](https://github.com/outbound-ai/aquarius#readme) for help with consuming this package.
 
-## Link local package
+## Local Path for Version
+In the consumer's package.json, rather than naming the version, name the relative path to the package
+```json
+  "dependencies": {
+    "@outbound-ai/softphone": "../../softphone",
+    ...
+  }
+```
+
+rather than
+```json
+  "dependencies": {
+    "@outbound-ai/softphone": "6.1.1",
+    ...
+  }
+```
+
+## ~~Link local package~~ MAY NOT WORK
+
+This is the documented method but it at least one user finds that it does not work reliably - or at all.
 
 `aquarius` uses `yarn` so this example uses `yarn` too.
 

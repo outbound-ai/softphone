@@ -99,11 +99,11 @@ export default class SoftPhoneWebSocket {
     });
   }
 
-  public agentTakeOver() {
+  public agentTakeOver(phoneNumber: string|null = null) {
     this.sendMessage({
       sequenceNumber: 0,
       type: WebSocketMessageType.AgentTakeOver,
-      payload: null,
+      payload: phoneNumber,
       participantId: null,
       participantType: null
     });
