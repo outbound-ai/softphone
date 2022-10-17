@@ -78,6 +78,12 @@ rather than
   }
 ```
 
+After changing softphone, re-add it in the consumer like this:
+```shell
+softphone/source $ yarn add ../../softphone
+```
+that's an alternative to `yarn install --force` which can be quite slow in comparison.
+
 ## ~~Link local package~~ MAY NOT WORK
 
 This is the documented method but it at least one user finds that it does not work reliably - or at all.
