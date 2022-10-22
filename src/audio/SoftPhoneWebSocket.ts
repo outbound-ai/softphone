@@ -171,6 +171,7 @@ export default class SoftPhoneWebSocket {
         participantType: parsed.participantType,
       }
       this.sendMessage(message);
+      return;
     }
 
     eventEmitter.emit('log', `unrecognized message: ${message.data}`);
