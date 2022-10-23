@@ -64,7 +64,7 @@ export default class Conversation {
     this._socket.synthesizeTouchTones(sequence);
   }
 
-  public agentTakeOver(phoneNumber: string|null = null) {
+  public agentTakeOver(phoneNumber: string | null = null) {
     this._socket.agentTakeOver(phoneNumber);
   }
 
