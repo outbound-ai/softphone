@@ -17,17 +17,17 @@ export default class SoftPhoneAudioContext {
     this._eventEmitter = eventEmitter;
   }
 
-  public async initializeAsync(): Promise<void> {
+  public async initializeAsync(midDeviceId?: string | null): Promise<void> {
     if (!this._context) {
       // This connects a gain node to the audio context.
       const audioContext = new AudioContext({ sampleRate: 8000 });
       this._context = audioContext;
-      
+
       if (audioContext.state !== 'suspended') {
         try {
-          await this.createAudioWorklet()
+          await this.createAudioWorklet(midDeviceId);
         } catch (error) {
-          console.error(error)
+          console.error(error);
           throw Error(
             '\r\n/softphoneAudioWorklet/SoftPhoneAudioWorklet.js missing from the public/ folder, please run:\r\n\r\ncp -r node_modules/@outbound-ai/softphone/lib/audio/softphoneAudioWorklet public/\r\n\r\n from the root directory of your React app to copy the required files'
           );
@@ -36,7 +36,7 @@ export default class SoftPhoneAudioContext {
     }
   }
 
-  public async createAudioWorklet() {
+  public async createAudioWorklet(micDeviceId?: string | null) {
     if (!this._context) return;
 
     const gainNode = this._context.createGain();
@@ -50,7 +50,10 @@ export default class SoftPhoneAudioContext {
     workletNode.connect(gainNode);
 
     // This connects the worklet to the microphone.
-    this._mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+    this._mediaStream = await navigator.mediaDevices.getUserMedia({
+      audio: { deviceId: micDeviceId || 'default' },
+      video: false
+    });
     const sourceNode = this._context.createMediaStreamSource(this._mediaStream);
     sourceNode.connect(workletNode);
 
@@ -89,7 +92,7 @@ export default class SoftPhoneAudioContext {
   }
 
   public enableMicroPhone(enable: boolean) {
-    this._mediaStream?.getAudioTracks().forEach((track) => track.enabled = enable);
+    this._mediaStream?.getAudioTracks().forEach((track) => (track.enabled = enable));
   }
 
   private handleInboundAudio(message: IWebSocketMessage) {
