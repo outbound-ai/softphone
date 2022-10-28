@@ -1,7 +1,8 @@
 {
   "name": "@outbound-ai/softphone",
-  "version": "6.1.4",
+  "version": "6.1.4-73cfff7061845410da4ac32324ca45741a3e62b0",
   "description": "",
+  "repository": "https://github.com/outbound-ai/softphone.git",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -34,5 +35,8 @@
   "dependencies": {
     "abab": "^2.0.5",
     "eventemitter3": "^4.0.7"
+  },
+  "publishConfig": {
+    "registry":"https://npm.pkg.github.com"
   }
 }

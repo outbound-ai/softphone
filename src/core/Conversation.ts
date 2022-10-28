@@ -1,10 +1,10 @@
+import SoftPhoneAudioContext from '../audio/SoftPhoneAudioContext';
 import SoftPhoneWebSocket, {
   ConnectionStateListener,
-  ParticipantStateListener,
   HoldForHumanListener,
+  ParticipantStateListener,
   TranscriptListener
 } from '../audio/SoftPhoneWebSocket';
-import SoftPhoneAudioContext from '../audio/SoftPhoneAudioContext';
 
 export default class Conversation {
   private _socket: SoftPhoneWebSocket;
@@ -44,7 +44,7 @@ export default class Conversation {
   }
 
   public unmuteInput(): void {
-    this._audio.enableMicroPhone(true);
+    // this._audio.enableMicroPhone(true);
     this._audio.muteInput(false);
   }
 

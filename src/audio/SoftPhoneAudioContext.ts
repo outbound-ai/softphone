@@ -18,22 +18,22 @@ export default class SoftPhoneAudioContext {
   }
 
   public async initializeAsync(midDeviceId?: string | null): Promise<void> {
-    if (!this._context) {
-      // This connects a gain node to the audio context.
-      const audioContext = new AudioContext({ sampleRate: 8000 });
-      this._context = audioContext;
+    // if (!this._context) {
+    // This connects a gain node to the audio context.
+    const audioContext = new AudioContext({ sampleRate: 8000 });
+    this._context = audioContext;
 
-      if (audioContext.state !== 'suspended') {
-        try {
-          await this.createAudioWorklet(midDeviceId);
-        } catch (error) {
-          console.error(error);
-          throw Error(
-            '\r\n/softphoneAudioWorklet/SoftPhoneAudioWorklet.js missing from the public/ folder, please run:\r\n\r\ncp -r node_modules/@outbound-ai/softphone/lib/audio/softphoneAudioWorklet public/\r\n\r\n from the root directory of your React app to copy the required files'
-          );
-        }
+    if (audioContext.state !== 'suspended') {
+      try {
+        await this.createAudioWorklet(midDeviceId);
+      } catch (error) {
+        console.error(error);
+        throw Error(
+          '\r\n/softphoneAudioWorklet/SoftPhoneAudioWorklet.js missing from the public/ folder, please run:\r\n\r\ncp -r node_modules/@outbound-ai/softphone/lib/audio/softphoneAudioWorklet public/\r\n\r\n from the root directory of your React app to copy the required files'
+        );
       }
     }
+    // }
   }
 
   public async createAudioWorklet(micDeviceId?: string | null) {
@@ -48,7 +48,6 @@ export default class SoftPhoneAudioContext {
     const workletNode = new AudioWorkletNode(this._context, 'softphone-audio-worklet') as IAudioWorkletNode;
     workletNode.port.onmessage = this.handleWorkletMessage.bind(this);
     workletNode.connect(gainNode);
-
     // This connects the worklet to the microphone.
     this._mediaStream = await navigator.mediaDevices.getUserMedia({
       audio: { deviceId: micDeviceId || 'default' },
@@ -92,7 +91,13 @@ export default class SoftPhoneAudioContext {
   }
 
   public enableMicroPhone(enable: boolean) {
-    this._mediaStream?.getAudioTracks().forEach((track) => (track.enabled = enable));
+    console.log('enable', enable);
+    // this._mediaStream?.getAudioTracks().forEach((track) => (track.enabled = enable));
+    console.log('this._mediaStream?.getAudioTracks()', this._mediaStream?.getAudioTracks());
+    this._mediaStream?.getAudioTracks().forEach((track) => track.stop());
+    this._worklet?.disconnect();
+    this._worklet = undefined;
+    this._mediaStream = undefined;
   }
 
   private handleInboundAudio(message: IWebSocketMessage) {
