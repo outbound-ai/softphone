@@ -22,16 +22,9 @@ export default class SoftPhoneAudioContext {
       // This connects a gain node to the audio context.
       const audioContext = new AudioContext({ sampleRate: 8000 });
       this._context = audioContext;
-      
+
       if (audioContext.state !== 'suspended') {
-        try {
-          await this.createAudioWorklet()
-        } catch (error) {
-          console.error(error)
-          throw Error(
-            '\r\n/softphoneAudioWorklet/SoftPhoneAudioWorklet.js missing from the public/ folder, please run:\r\n\r\ncp -r node_modules/@outbound-ai/softphone/lib/audio/softphoneAudioWorklet public/\r\n\r\n from the root directory of your React app to copy the required files'
-          );
-        }
+        await this.createAudioWorklet();
       }
     }
   }
@@ -44,15 +37,26 @@ export default class SoftPhoneAudioContext {
     gainNode.gain.value = 3.0 / 4.0;
 
     const workletPath = `${process.env.PUBLIC_URL}/softphoneAudioWorklet/SoftPhoneAudioWorklet.js`;
-    await this._context.audioWorklet.addModule(workletPath);
+    await this._context.audioWorklet.addModule(workletPath).catch((error) => {
+      console.log('error', error);
+      throw Error(
+        '\r\n/softphoneAudioWorklet/SoftPhoneAudioWorklet.js missing from the public/ folder, please run:\r\n\r\ncp -r node_modules/@outbound-ai/softphone/lib/audio/softphoneAudioWorklet public/\r\n\r\n from the root directory of your React app to copy the required files'
+      );
+    });
+
     const workletNode = new AudioWorkletNode(this._context, 'softphone-audio-worklet') as IAudioWorkletNode;
     workletNode.port.onmessage = this.handleWorkletMessage.bind(this);
     workletNode.connect(gainNode);
 
-    // This connects the worklet to the microphone.
-    this._mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-    const sourceNode = this._context.createMediaStreamSource(this._mediaStream);
-    sourceNode.connect(workletNode);
+    try {
+      // This connects the worklet to the microphone.
+      this._mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      const sourceNode = this._context.createMediaStreamSource(this._mediaStream);
+      sourceNode.connect(workletNode);
+    } catch (error) {
+      this._eventEmitter.emit('log', 'User has denied access to the microphone.');
+      throw error;
+    }
 
     this._worklet = workletNode;
     this._gainNode = gainNode;
@@ -89,7 +93,7 @@ export default class SoftPhoneAudioContext {
   }
 
   public enableMicroPhone(enable: boolean) {
-    this._mediaStream?.getAudioTracks().forEach((track) => track.enabled = enable);
+    this._mediaStream?.getAudioTracks().forEach((track) => (track.enabled = enable));
   }
 
   private handleInboundAudio(message: IWebSocketMessage) {

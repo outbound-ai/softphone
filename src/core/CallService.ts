@@ -1,7 +1,7 @@
-import Conversation from './Conversation';
 import EventEmitter from 'eventemitter3';
-import SoftphoneWebSocket from '../audio/SoftPhoneWebSocket';
 import SoftPhoneAudioContext from '../audio/SoftPhoneAudioContext';
+import SoftphoneWebSocket from '../audio/SoftPhoneWebSocket';
+import Conversation from './Conversation';
 
 export type OnLogListener = (message: string) => void;
 
@@ -15,7 +15,7 @@ export default class CallService {
   }
 
   async getConversationAsync(jobId: string, accessToken: string): Promise<Conversation> {
-    if (CallService.SoftphoneAudioContext == null) {
+    if (!CallService.SoftphoneAudioContext) {
       CallService.SoftphoneAudioContext = new SoftPhoneAudioContext(CallService.EventEmitter);
       await CallService.SoftphoneAudioContext.initializeAsync();
     }
