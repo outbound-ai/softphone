@@ -177,7 +177,7 @@ export default class SoftPhoneWebSocket {
     eventEmitter.emit('log', `unrecognized message: ${message.data}`);
   }
 
-  private handleClose(e: any) {
+  private handleClose() {
     this._connected = false;
     this._connectionStateListener?.call(this, false);
     this._eventEmitter.emit('log', 'connection closed');
