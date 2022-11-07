@@ -24,7 +24,11 @@ export default class SoftPhoneAudioContext {
       this._context = audioContext;
 
       if (audioContext.state !== 'suspended') {
-        await this.createAudioWorklet();
+        try {
+          await this.createAudioWorklet();
+        } catch (error) {
+          console.log('error', error);
+        }
       }
     }
   }
@@ -38,10 +42,11 @@ export default class SoftPhoneAudioContext {
 
     const workletPath = `${process.env.PUBLIC_URL}/softphoneAudioWorklet/SoftPhoneAudioWorklet.js`;
     await this._context.audioWorklet.addModule(workletPath).catch((error) => {
-      console.log('error', error);
-      throw Error(
+      this._eventEmitter.emit(
+        'log',
         '\r\n/softphoneAudioWorklet/SoftPhoneAudioWorklet.js missing from the public/ folder, please run:\r\n\r\ncp -r node_modules/@outbound-ai/softphone/lib/audio/softphoneAudioWorklet public/\r\n\r\n from the root directory of your React app to copy the required files'
       );
+      throw error;
     });
 
     const workletNode = new AudioWorkletNode(this._context, 'softphone-audio-worklet') as IAudioWorkletNode;
