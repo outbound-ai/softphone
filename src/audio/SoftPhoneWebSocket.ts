@@ -111,12 +111,12 @@ export default class SoftPhoneWebSocket {
 
   public removeParticipant(participantId: string) {
     this.sendMessage({
-        sequenceNumber: 0,
-        type: WebSocketMessageType.RemoveParticipant,
-        payload: participantId,
-        participantId: null,
-        participantType: null
-      });
+      sequenceNumber: 0,
+      type: WebSocketMessageType.RemoveParticipant,
+      payload: participantId,
+      participantId: null,
+      participantType: null
+    });
   }
 
   private handleOpen(): void {
@@ -168,8 +168,8 @@ export default class SoftPhoneWebSocket {
         type: WebSocketMessageType.ConnectionHealth,
         payload: parsed.payload,
         participantId: parsed.participantId,
-        participantType: parsed.participantType,
-      }
+        participantType: parsed.participantType
+      };
       this.sendMessage(message);
       return;
     }
@@ -187,7 +187,7 @@ export default class SoftPhoneWebSocket {
     this.sendMessage(message);
   }
 
-  private sendMessage(message: IWebSocketMessage){
+  private sendMessage(message: IWebSocketMessage) {
     const socket = this._socket;
 
     if (socket && socket.readyState === 1) {
