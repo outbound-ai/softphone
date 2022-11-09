@@ -1,5 +1,5 @@
 export default class Monitoring {
-  public initWebSocketLatencyTest(hostname: string, accessToken: string) {
+  static initWebSocketLatencyTest(hostname: string, accessToken: string) {
     const url = `${hostname}/api/v1/monitoring/browser`;
 
     const webSocket = new WebSocket(url, ['access_token', accessToken]);
