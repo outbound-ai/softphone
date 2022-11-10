@@ -24,7 +24,7 @@ export default class Conversation {
   }
 
   get inputMuted(): boolean {
-    return this._audio.inputMuted;
+    return this._audio?.inputMuted;
   }
 
   get audio() {
@@ -32,28 +32,29 @@ export default class Conversation {
   }
 
   get audioCtx() {
-    return this._audio.audioCtx;
+    return this._audio?.audioCtx;
   }
 
   get outputMuted(): boolean {
-    return this._audio.outputMuted;
+    return this._audio?.outputMuted;
   }
 
   public muteInput(): void {
-    this._audio.muteInput(true);
+    this._audio?.muteInput(true);
   }
 
   public unmuteInput(): void {
-    // this._audio.enableMicroPhone(true);
-    this._audio.muteInput(false);
+    if (!this._audio) return;
+    this._audio?.enableMicroPhone(true);
+    this._audio?.muteInput(false);
   }
 
   public muteOutput(): void {
-    this._audio.muteOutput(true);
+    this._audio?.muteOutput(true);
   }
 
   public unmuteOutput(): void {
-    this._audio.muteOutput(false);
+    this._audio?.muteOutput(false);
   }
 
   public synthesizeSpeech(text: string) {
@@ -64,8 +65,8 @@ export default class Conversation {
     this._socket.synthesizeTouchTones(sequence);
   }
 
-  public agentTakeOver() {
-    this._socket.agentTakeOver();
+  public agentTakeOver(phoneNumber: string | null = null) {
+    this._socket.agentTakeOver(phoneNumber);
   }
 
   public removeParticipant(participantId: string) {
@@ -73,7 +74,7 @@ export default class Conversation {
   }
 
   public disconnect() {
-    this._audio.enableMicroPhone(false);
+    this._audio?.enableMicroPhone(false);
     this._socket.disconnect();
   }
 
