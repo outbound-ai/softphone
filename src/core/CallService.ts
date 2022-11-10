@@ -15,10 +15,11 @@ export default class CallService {
   }
 
   async getConversationAsync(jobId: string, accessToken: string, micDeviceId?: string | null): Promise<Conversation> {
-    if (!CallService.SoftphoneAudioContext) {
-      CallService.SoftphoneAudioContext = new SoftPhoneAudioContext(CallService.EventEmitter);
-      await CallService.SoftphoneAudioContext.initializeAsync(micDeviceId);
+    if (CallService.SoftphoneAudioContext) {
+      await CallService.SoftphoneAudioContext.audioCtx?.close();
     }
+    CallService.SoftphoneAudioContext = new SoftPhoneAudioContext(CallService.EventEmitter);
+    await CallService.SoftphoneAudioContext.initializeAsync(micDeviceId);
 
     const webSocket = new SoftphoneWebSocket(this._hostname, CallService.EventEmitter);
     webSocket.connect(jobId, accessToken);
