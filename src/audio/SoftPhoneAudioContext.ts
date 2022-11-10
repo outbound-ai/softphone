@@ -56,7 +56,10 @@ export default class SoftPhoneAudioContext {
 
     try {
       // This connects the worklet to the microphone.
-      this._mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { deviceId: micDeviceId || 'default' },video: false });
+      this._mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: { deviceId: micDeviceId || 'default' },
+        video: false
+      });
       const sourceNode = this._context.createMediaStreamSource(this._mediaStream);
       sourceNode.connect(workletNode);
     } catch (error) {
@@ -99,17 +102,14 @@ export default class SoftPhoneAudioContext {
   }
 
   public enableMicroPhone(enable: boolean) {
-<<<<<<< HEAD
-    console.log('enable', enable);
-    // this._mediaStream?.getAudioTracks().forEach((track) => (track.enabled = enable));
-    console.log('this._mediaStream?.getAudioTracks()', this._mediaStream?.getAudioTracks());
-    this._mediaStream?.getAudioTracks().forEach((track) => track.stop());
-    this._worklet?.disconnect();
-    this._worklet = undefined;
-    this._mediaStream = undefined;
-=======
+    // console.log('enable', enable);
+    // // this._mediaStream?.getAudioTracks().forEach((track) => (track.enabled = enable));
+    // console.log('this._mediaStream?.getAudioTracks()', this._mediaStream?.getAudioTracks());
+    // this._mediaStream?.getAudioTracks().forEach((track) => track.stop());
+    // this._worklet?.disconnect();
+    // this._worklet = undefined;
+    // this._mediaStream = undefined;
     this._mediaStream?.getAudioTracks().forEach((track) => (track.enabled = enable));
->>>>>>> 6c81ef4214267d1526c52c9f5df2959be8d419a5
   }
 
   private handleInboundAudio(message: IWebSocketMessage) {
