@@ -102,13 +102,6 @@ export default class SoftPhoneAudioContext {
   }
 
   public enableMicroPhone(enable: boolean) {
-    // console.log('enable', enable);
-    // // this._mediaStream?.getAudioTracks().forEach((track) => (track.enabled = enable));
-    // console.log('this._mediaStream?.getAudioTracks()', this._mediaStream?.getAudioTracks());
-    // this._mediaStream?.getAudioTracks().forEach((track) => track.stop());
-    // this._worklet?.disconnect();
-    // this._worklet = undefined;
-    // this._mediaStream = undefined;
     this._mediaStream?.getAudioTracks().forEach((track) => (track.enabled = enable));
   }
 
