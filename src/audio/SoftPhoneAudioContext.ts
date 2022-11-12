@@ -17,7 +17,7 @@ export default class SoftPhoneAudioContext {
     this._eventEmitter = eventEmitter;
   }
 
-  public async initializeAsync(midDeviceId?: string | null): Promise<void> {
+  public async initializeAsync(micDeviceId?: string | null): Promise<void> {
     if (!this._context) {
       // This connects a gain node to the audio context.
       const audioContext = new AudioContext({ sampleRate: 8000 });
@@ -25,7 +25,7 @@ export default class SoftPhoneAudioContext {
 
       if (audioContext.state !== 'suspended') {
         try {
-          await this.createAudioWorklet(midDeviceId);
+          await this.createAudioWorklet(micDeviceId);
         } catch (error) {
           console.log('error', error);
         }
