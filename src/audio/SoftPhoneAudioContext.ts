@@ -17,7 +17,7 @@ export default class SoftPhoneAudioContext {
     this._eventEmitter = eventEmitter;
   }
 
-  public async initializeAsync(): Promise<void> {
+  public async initializeAsync(micDeviceId?: string | null): Promise<void> {
     if (!this._context) {
       // This connects a gain node to the audio context.
       const audioContext = new AudioContext({ sampleRate: 8000 });
@@ -25,15 +25,16 @@ export default class SoftPhoneAudioContext {
 
       if (audioContext.state !== 'suspended') {
         try {
-          await this.createAudioWorklet();
+          await this.createAudioWorklet(micDeviceId);
         } catch (error) {
           console.log('error', error);
         }
       }
     }
+    // }
   }
 
-  public async createAudioWorklet() {
+  public async createAudioWorklet(micDeviceId?: string | null) {
     if (!this._context) return;
 
     const gainNode = this._context.createGain();
@@ -55,7 +56,10 @@ export default class SoftPhoneAudioContext {
 
     try {
       // This connects the worklet to the microphone.
-      this._mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      this._mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: { deviceId: micDeviceId || 'default' },
+        video: false
+      });
       const sourceNode = this._context.createMediaStreamSource(this._mediaStream);
       sourceNode.connect(workletNode);
     } catch (error) {
