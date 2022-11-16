@@ -27,10 +27,14 @@ export default class Monitoring {
 
         webSocket.addEventListener('message', (message: MessageEvent) => {
             const nowDate = new Date()
-            const pingSessionMessage:IPingSessionEchoMessage = JSON.parse(message.data)
+            const pingSessionMessage: IPingSessionEchoMessage = JSON.parse(message.data)
             const thenString = pingSessionMessage.echo
-            const thenTime = Date.parse(thenString!)
-            const elapsedTime = nowDate.getTime()-thenTime
+            if (!thenString) {
+                console.log(`Warning: Ping message lacked origination time.`)
+                return;
+            }
+            const thenTime = Date.parse(thenString)
+            const elapsedTime = nowDate.getTime() - thenTime
             console.log(`RTT ${elapsedTime}ms`)
         })
 
