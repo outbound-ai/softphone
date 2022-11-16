@@ -61,7 +61,23 @@ To consume the package without publishing it, link a local instance.
 
 See the [aquarius readme](https://github.com/outbound-ai/aquarius#readme) for help with consuming this package.
 
-## Local Path for Version
+## Link local package
+
+This is the documented method but it at least one user finds that it does not work reliably - or at all.
+
+`aquarius` uses `yarn` so this example uses `yarn` too.
+
+- Build the softphone package:
+  - `~/source/repos/Outbound.AI/SoftPhone $ yarn install`
+  - `~/source/repos/Outbound.AI/SoftPhone $ yarn run build`
+- Create a link to the local package
+  - `~/source/repos/Outbound.AI/SoftPhone $ yarn link`
+- Consume the local package in `aquarius`
+  - `~/source/repos/Outbound.AI/aquarius/source $ yarn link "@outbound-ai/softphone"`
+  - per @Cristian's advice, _**do not**_ run the following unless you are unlinking:
+  - `~/source/repos/Outbound.AI~~~~/aquarius/source $ yarn install --force`
+
+### Local Path Method for Local Version
 In the consumer's package.json, rather than naming the version, name the relative path to the package
 ```json
   "dependencies": {
@@ -84,17 +100,3 @@ softphone/source $ yarn add ../../softphone
 ```
 that's an alternative to `yarn install --force` which can be quite slow in comparison.
 
-## ~~Link local package~~ MAY NOT WORK
-
-This is the documented method but it at least one user finds that it does not work reliably - or at all.
-
-`aquarius` uses `yarn` so this example uses `yarn` too.
-
-- Build the softphone package:
-  - `~/source/repos/Outbound.AI/SoftPhone $ yarn install`
-  - `~/source/repos/Outbound.AI/SoftPhone $ yarn run build`
-- Provide `yarn link` with the package
-  - `~/source/repos/Outbound.AI/SoftPhone $ yarn link`
-- Consume the package in `aquarius`
-  - `~/source/repos/Outbound.AI/aquarius/source $ yarn link "@outbound-ai/softphone"`
-  - `~/source/repos/Outbound.AI/aquarius/source $ yarn install --force`
