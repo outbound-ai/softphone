@@ -1,6 +1,6 @@
 {
   "name": "@outbound-ai/softphone",
-  "version": "6.1.7",
+  "version": "6.1.8",
   "description": "",
   "repository": "https://github.com/outbound-ai/softphone.git",
   "main": "./lib/index.js",

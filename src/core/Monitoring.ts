@@ -18,9 +18,14 @@ export default class Monitoring {
 
     let sendPing: NodeJS.Timer | null
     webSocket.addEventListener('open', () => {
-      console.log('Monitoring._isConnected', Monitoring._isConnected)
+      console.log('Monitoring connection to the web socket opened')
 
+      if (Monitoring._isConnected) {
+        console.log('Silently closing a new ws connection because another one is already established')
+        return webSocket.close()
+      }
       Monitoring._isConnected = true
+
       sendPing = setInterval(() => {
         const echoMessage: IPingSessionEchoMessage = {
           messageType: 'echo',
