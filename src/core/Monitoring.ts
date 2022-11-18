@@ -7,7 +7,7 @@ interface IPingSessionEchoMessage extends IPingSessionMessage {
 }
 
 export default class Monitoring {
-  private static _isConnected: boolean = false
+  private static _isConnected = false
 
   static initWebSocketLatencyTest(hostname: string, accessToken: string) {
     if (Monitoring._isConnected) return
