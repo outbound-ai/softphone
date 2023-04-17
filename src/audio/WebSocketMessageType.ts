@@ -8,7 +8,6 @@ export default class WebSocketMessageType {
   static SynthesizeTouchTone = 'SynthesizeTouchTone';
   static Hangup = 'Hangup';
   static Participants = 'Participants';
-  static RemoveParticipant = 'RemoveParticipant';
   static AgentTakeOver = 'AgentTakeOver';
   static ConnectionHealth = 'ConnectionHealth';
 }

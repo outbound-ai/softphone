@@ -109,16 +109,6 @@ export default class SoftPhoneWebSocket {
     });
   }
 
-  public removeParticipant(participantId: string) {
-    this.sendMessage({
-      sequenceNumber: 0,
-      type: WebSocketMessageType.RemoveParticipant,
-      payload: participantId,
-      participantId: null,
-      participantType: null
-    });
-  }
-
   private handleOpen(): void {
     this._connected = true;
     this._connectionStateListener?.call(this, true);
