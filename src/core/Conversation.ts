@@ -69,10 +69,6 @@ export default class Conversation {
     this._socket.agentTakeOver(phoneNumber);
   }
 
-  public removeParticipant(participantId: string) {
-    this._socket.removeParticipant(participantId);
-  }
-
   public disconnect() {
     this._audio?.enableMicroPhone(false);
     this._socket.disconnect();
