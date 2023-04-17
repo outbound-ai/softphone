@@ -1,8 +1,7 @@
 # Call Service Browser Softphone Client
-This is a placeholder for the call service client NPM package.
+Call service client NPM package.
 
 # Example Usage
-This is the currently proposed NPM package interface.
 
 ```javascript
 
@@ -24,7 +23,6 @@ conversation.sendDtmfCode("123abc");                                    // Send 
 
 // You can control the conversation using these methods.
 conversation.participants();                                            // Retrieves metadata about the call participants.
-conversation.removeParticipantAsync("00000000-0000-0000-0000000000");   // Removes a participant from the call.
 conversation.disconnect();                                              // This leaves the call without interrupting it.
 conversation.hangUpAsync();                                             // This ends the call for all participants.
 
@@ -75,11 +73,11 @@ This is the documented method but it at least one user finds that it does not wo
 - Consume the local package in `aquarius`
   - `~/source/repos/Outbound.AI/aquarius/source $ yarn link "@outbound-ai/softphone"`
   - per @Cristian's advice, _**do not**_ run the following unless you are unlinking:
-  - `~/source/repos/Outbound.AI~~~~/aquarius/source $ yarn install --force`
+  - `~/source/repos/Outbound.AI/aquarius/source $ yarn install --force`
 
 ### Local Path Method for Local Version
 In the consumer's package.json, rather than naming the version, name the relative path to the package
-```json
+```
   "dependencies": {
     "@outbound-ai/softphone": "../../softphone",
     ...
@@ -87,7 +85,7 @@ In the consumer's package.json, rather than naming the version, name the relativ
 ```
 
 rather than
-```json
+```
   "dependencies": {
     "@outbound-ai/softphone": "6.1.1",
     ...
