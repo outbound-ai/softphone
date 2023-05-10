@@ -1,9 +1,10 @@
 import EventEmitter from 'eventemitter3';
 import IWebSocketMessage from './IWebSocketMessage';
+import { ITakeOver, BrowserTakeOver, NoTakeOver } from './ITakeOver';
 import WebSocketMessageType from './WebSocketMessageType';
 
 export type ConnectionStateListener = (connected: boolean) => void;
-export type ParticipantStateListener = (participants: Record<string, string>) => void;
+export type TakeOverStateListener = (takeOver: ITakeOver) => void;
 export type HoldForHumanListener = (message: string) => void;
 export type TranscriptListener = (participantId: string, participantType: string, message: string) => void;
 
@@ -12,9 +13,9 @@ export default class SoftPhoneWebSocket {
   private _hostname: string;
   private _eventEmitter: EventEmitter;
   private _socket?: WebSocket;
-  private _participants: Record<string, string> = {};
+  private _takeOver: ITakeOver = NoTakeOver;
   private _connectionStateListener?: ConnectionStateListener;
-  private _participantStateListener?: ParticipantStateListener;
+  private _takeOverStateListener?: TakeOverStateListener;
   private _holdForHumanListener?: HoldForHumanListener;
   private _transcriptListener?: TranscriptListener;
 
@@ -43,8 +44,8 @@ export default class SoftPhoneWebSocket {
     this._connected = true;
   }
 
-  public participants() {
-    return this._participants || null;
+  public takeOverState() {
+    return this._takeOver;
   }
 
   public synthesizeSpeech(text: string) {
@@ -71,8 +72,8 @@ export default class SoftPhoneWebSocket {
     this._connectionStateListener = listener;
   }
 
-  public set participantStateListener(listener: ParticipantStateListener) {
-    this._participantStateListener = listener;
+  public set takeOverStateListener(listener: TakeOverStateListener) {
+    this._takeOverStateListener = listener;
   }
 
   public set holdForHumanListener(listener: HoldForHumanListener) {
@@ -99,11 +100,11 @@ export default class SoftPhoneWebSocket {
     });
   }
 
-  public agentTakeOver(phoneNumber: string | null = null) {
+  public agentTakeOver(takeOver: ITakeOver = BrowserTakeOver) {
     this.sendMessage({
       sequenceNumber: 0,
       type: WebSocketMessageType.AgentTakeOver,
-      payload: phoneNumber,
+      payload: JSON.stringify(takeOver),
       participantId: null,
       participantType: null
     });
@@ -120,9 +121,9 @@ export default class SoftPhoneWebSocket {
     const parsed: IWebSocketMessage = JSON.parse(message.data);
     const eventEmitter = this._eventEmitter;
 
-    if (parsed.type === WebSocketMessageType.Participants && parsed.payload) {
-      this._participants = JSON.parse(parsed.payload);
-      this._participantStateListener?.call(this, this._participants);
+    if (parsed.type === WebSocketMessageType.TakeOver && parsed.payload) {
+      this._takeOver = JSON.parse(parsed.payload);
+      this._takeOverStateListener?.call(this, this._takeOver);
       return;
     }
 

@@ -7,7 +7,7 @@ export default class WebSocketMessageType {
   static SynthesizeSpeech = 'SynthesizeSpeech';
   static SynthesizeTouchTone = 'SynthesizeTouchTone';
   static Hangup = 'Hangup';
-  static Participants = 'Participants';
+  static TakeOver = 'TakeOver';
   static AgentTakeOver = 'AgentTakeOver';
   static ConnectionHealth = 'ConnectionHealth';
 }

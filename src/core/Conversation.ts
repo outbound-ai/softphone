@@ -2,9 +2,10 @@ import SoftPhoneAudioContext from '../audio/SoftPhoneAudioContext';
 import SoftPhoneWebSocket, {
   ConnectionStateListener,
   HoldForHumanListener,
-  ParticipantStateListener,
+  TakeOverStateListener,
   TranscriptListener
 } from '../audio/SoftPhoneWebSocket';
+import { ITakeOver, BrowserTakeOver } from "../audio/ITakeOver";
 
 export default class Conversation {
   private _socket: SoftPhoneWebSocket;
@@ -13,10 +14,6 @@ export default class Conversation {
   constructor(softPhoneWebSocket: SoftPhoneWebSocket, softPhoneAudioContext: SoftPhoneAudioContext) {
     this._socket = softPhoneWebSocket;
     this._audio = softPhoneAudioContext;
-  }
-
-  get participants() {
-    return this._socket.participants;
   }
 
   get connected(): boolean {
@@ -65,8 +62,8 @@ export default class Conversation {
     this._socket.synthesizeTouchTones(sequence);
   }
 
-  public agentTakeOver(phoneNumber: string | null = null) {
-    this._socket.agentTakeOver(phoneNumber);
+  public agentTakeOver(takeOver: ITakeOver = BrowserTakeOver) {
+    this._socket.agentTakeOver(takeOver);
   }
 
   public disconnect() {
@@ -82,8 +79,8 @@ export default class Conversation {
     this._socket.connectionStateListener = listener;
   }
 
-  public set onParticipantStateChanged(listener: ParticipantStateListener) {
-    this._socket.participantStateListener = listener;
+  public set onTakeOverStateChanged(listener: TakeOverStateListener) {
+    this._socket.takeOverStateListener = listener;
   }
 
   public set onTranscriptAvailable(listener: TranscriptListener) {
