@@ -67,6 +67,7 @@ export default class Conversation {
   }
 
   public disconnect() {
+    this._audio.stopShowingBrowserAudioIcon()
     this._audio?.enableMicroPhone(false);
     this._socket.disconnect();
   }
