@@ -105,6 +105,10 @@ export default class SoftPhoneAudioContext {
     this._mediaStream?.getAudioTracks().forEach((track) => (track.enabled = enable));
   }
 
+  public stopShowingBrowserAudioIcon() {
+    this._mediaStream?.getAudioTracks().forEach((track) => track.stop());
+  }
+
   private handleInboundAudio(message: IWebSocketMessage) {
     if (this._worklet) {
       this._worklet.port.postMessage(message);
