@@ -18,7 +18,7 @@ export default class SoftPhoneWebSocket {
   private _takeOverStateListener?: TakeOverStateListener
   private _holdForHumanListener?: HoldForHumanListener
   private _transcriptListener?: TranscriptListener
-  private _connectCount: number = 0
+  private _connectCount = Number('0')
 
   constructor(hostname: string, eventEmitter: EventEmitter) {
     eventEmitter.on(WebSocketMessageType.OutboundAudio, this.handleOutboundAudio.bind(this))
@@ -36,10 +36,10 @@ export default class SoftPhoneWebSocket {
     const url = `${hostname}/api/v1/jobs/${jobId}/browser`
     eventEmitter.emit('log', `attempting connection to "${url}"`)
 
-    this._connectCount = this._connectCount + 1;
+    this._connectCount = this._connectCount + 1
     if (this._connectCount > 5) {
       eventEmitter.emit('log', `connection retry greater than 5, end of retries. Count: "${this._connectCount}"`)
-      return;
+      return
     }
 
     const webSocket = new WebSocket(url, ['access_token', accessToken])
@@ -49,7 +49,7 @@ export default class SoftPhoneWebSocket {
     webSocket.addEventListener('error', (event) => {
       this.disconnect()
       this.connect(jobId, accessToken)
-    });
+    })
 
     this._socket = webSocket
     this._connected = true
