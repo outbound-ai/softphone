@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3'
+import { BrowserTakeOver, ITakeOver, NoTakeOver } from './ITakeOver'
 import IWebSocketMessage from './IWebSocketMessage'
-import { ITakeOver, BrowserTakeOver, NoTakeOver } from './ITakeOver'
 import WebSocketMessageType from './WebSocketMessageType'
 
 export type ConnectionStateListener = (connected: boolean) => void
@@ -112,6 +112,8 @@ export default class SoftPhoneWebSocket {
   }
 
   public agentTakeOver(takeOver: ITakeOver = BrowserTakeOver) {
+    console.log('Softphone agentTakeOver message = ', JSON.stringify(takeOver), WebSocketMessageType.AgentTakeOver)
+
     this.sendMessage({
       sequenceNumber: 0,
       type: WebSocketMessageType.AgentTakeOver,
@@ -129,8 +131,11 @@ export default class SoftPhoneWebSocket {
   }
 
   private handleMessage(message: MessageEvent): void {
+    
     const parsed: IWebSocketMessage = JSON.parse(message.data)
     const eventEmitter = this._eventEmitter
+
+    console.log('SoftPhoneWebSocket.handleMessage: ', parsed)
 
     if (parsed.type === WebSocketMessageType.TakeOver && parsed.payload) {
       this._takeOver = JSON.parse(parsed.payload)
