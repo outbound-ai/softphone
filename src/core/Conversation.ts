@@ -1,3 +1,4 @@
+import { BrowserTakeOver, ITakeOver } from "../audio/ITakeOver";
 import SoftPhoneAudioContext from '../audio/SoftPhoneAudioContext';
 import SoftPhoneWebSocket, {
   ConnectionStateListener,
@@ -5,7 +6,6 @@ import SoftPhoneWebSocket, {
   TakeOverStateListener,
   TranscriptListener
 } from '../audio/SoftPhoneWebSocket';
-import { ITakeOver, BrowserTakeOver } from "../audio/ITakeOver";
 
 export default class Conversation {
   private _socket: SoftPhoneWebSocket;
@@ -74,6 +74,10 @@ export default class Conversation {
 
   public hangup() {
     this._socket.hangup();
+  }
+
+  public isAudioExist(): boolean {
+    return this._socket.isAudioExist();
   }
 
   public set onConnectionStateChanged(listener: ConnectionStateListener) {
