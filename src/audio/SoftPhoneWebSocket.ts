@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3'
+import { BrowserTakeOver, ITakeOver, NoTakeOver } from './ITakeOver'
 import IWebSocketMessage from './IWebSocketMessage'
-import { ITakeOver, BrowserTakeOver, NoTakeOver } from './ITakeOver'
 import WebSocketMessageType from './WebSocketMessageType'
 
 export type ConnectionStateListener = (connected: boolean) => void
@@ -19,6 +19,7 @@ export default class SoftPhoneWebSocket {
   private _holdForHumanListener?: HoldForHumanListener
   private _transcriptListener?: TranscriptListener
   private _connectCount = Number('0')
+  private _isAudioExist = false
 
   constructor(hostname: string, eventEmitter: EventEmitter) {
     eventEmitter.on(WebSocketMessageType.OutboundAudio, this.handleOutboundAudio.bind(this))
@@ -101,6 +102,10 @@ export default class SoftPhoneWebSocket {
     }
   }
 
+  public isAudioExist() {
+    return this._isAudioExist
+  }
+
   public hangup() {
     this.sendMessage({
       sequenceNumber: 0,
@@ -124,14 +129,12 @@ export default class SoftPhoneWebSocket {
   private handleOpen(): void {
     this._connected = true
     this._connectionStateListener?.call(this, true)
-    this._eventEmitter.emit('socket_open')
-    this._eventEmitter.emit('log', 'connection opened')
   }
 
   private handleMessage(message: MessageEvent): void {
+    
     const parsed: IWebSocketMessage = JSON.parse(message.data)
     const eventEmitter = this._eventEmitter
-
     if (parsed.type === WebSocketMessageType.TakeOver && parsed.payload) {
       this._takeOver = JSON.parse(parsed.payload)
       this._takeOverStateListener?.call(this, this._takeOver)
@@ -147,6 +150,9 @@ export default class SoftPhoneWebSocket {
     }
 
     if (parsed.type === WebSocketMessageType.InboundAudio) {
+      if (!this._isAudioExist) {
+        this._isAudioExist = true
+      }
       eventEmitter.emit(WebSocketMessageType.InboundAudio, parsed)
       return
     }
