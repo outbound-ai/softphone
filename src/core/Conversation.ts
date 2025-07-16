@@ -87,7 +87,7 @@ export default class Conversation {
   // Disables mic track
   // Closes WebSocket connection
   public disconnect() {
-    this._audio.stopShowingBrowserAudioIcon()
+    this._audio.hideBrowserAudioIcon()
     this._audio?.enableMicroPhone(false)
     this._socket.disconnect()
   }

@@ -139,7 +139,7 @@ export default class SoftPhoneAudioContext {
     this._mediaStream?.getAudioTracks().forEach((track) => (track.enabled = enable))
   }
 
-  public stopShowingBrowserAudioIcon() {
+  public hideBrowserAudioIcon() {
     this._mediaStream?.getAudioTracks().forEach((track) => track.stop())
   }
 
