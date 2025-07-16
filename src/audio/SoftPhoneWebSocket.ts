@@ -76,7 +76,7 @@ export default class SoftPhoneWebSocket {
     webSocket.addEventListener('open', this.handleOpen.bind(this))
     webSocket.addEventListener('message', this.handleMessage.bind(this))
     webSocket.addEventListener('close', this.handleClose.bind(this))
-    webSocket.addEventListener('error', (event) => {
+    webSocket.addEventListener('error', () => {
       this.disconnect()
       this.connect(jobId, accessToken)
     })
