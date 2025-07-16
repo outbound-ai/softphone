@@ -1,36 +1,62 @@
+// SoftPhoneWebSocket.ts
+// Manages the WebSocket connection for the softphone, routing messages
+// to appropriate handlers and emitting events for audio, transcripts, takeover, etc.
+
 import EventEmitter from 'eventemitter3'
 import { BrowserTakeOver, ITakeOver, NoTakeOver } from './ITakeOver'
 import IWebSocketMessage from './IWebSocketMessage'
 import WebSocketMessageType from './WebSocketMessageType'
 
+// Listener signatures for external callbacks
 export type ConnectionStateListener = (connected: boolean) => void
 export type TakeOverStateListener = (takeOver: ITakeOver) => void
 export type HoldForHumanListener = (message: string) => void
 export type TranscriptListener = (participantId: string, participantType: string, message: string) => void
 
 export default class SoftPhoneWebSocket {
+  // Tracks whether the socket is currently open
   private _connected = false
+
+  // Base URL or host for the WebSocket endpoint
   private _hostname: string
+
+  // Shared event emitter used for cross-module events (audio frames, logs)
   private _eventEmitter: EventEmitter
+
+  // Underlying WebSocket instance
   private _socket?: WebSocket
+
+  // Current takeover state (none or browser/agent)
   private _takeOver: ITakeOver = NoTakeOver
+
+  // Optional listeners
   private _connectionStateListener?: ConnectionStateListener
   private _takeOverStateListener?: TakeOverStateListener
   private _holdForHumanListener?: HoldForHumanListener
   private _transcriptListener?: TranscriptListener
+
+  // How many times we have attempted to connect
   private _connectCount = Number('0')
+
+  // Flag to indicate if any inbound audio frames have arrived
   private _isAudioExist = false
 
   constructor(hostname: string, eventEmitter: EventEmitter) {
+    // Listen for outbound audio events from the audio module
     eventEmitter.on(WebSocketMessageType.OutboundAudio, this.handleOutboundAudio.bind(this))
     this._hostname = hostname
     this._eventEmitter = eventEmitter
   }
 
+  // Expose current connection state
   public get connected() {
     return this._connected
   }
 
+  /**
+   * Open a new WebSocket connection.
+   * Retries up to five times before giving up.
+   */
   public connect(jobId: string, accessToken: string) {
     const hostname = this._hostname
     const eventEmitter = this._eventEmitter
@@ -43,7 +69,10 @@ export default class SoftPhoneWebSocket {
       return
     }
 
+    // Include access token as a subprotocol header
     const webSocket = new WebSocket(url, ['access_token', accessToken])
+
+    // Wire up low-level WebSocket events
     webSocket.addEventListener('open', this.handleOpen.bind(this))
     webSocket.addEventListener('message', this.handleMessage.bind(this))
     webSocket.addEventListener('close', this.handleClose.bind(this))
@@ -60,6 +89,7 @@ export default class SoftPhoneWebSocket {
     return this._takeOver
   }
 
+  // Send a TTS request for the given text
   public synthesizeSpeech(text: string) {
     this.sendMessage({
       sequenceNumber: 0,
@@ -70,6 +100,7 @@ export default class SoftPhoneWebSocket {
     })
   }
 
+  // Send DTMF tones (digits)
   public synthesizeTouchTones(digits: string) {
     this.sendMessage({
       sequenceNumber: 0,
@@ -80,10 +111,12 @@ export default class SoftPhoneWebSocket {
     })
   }
 
+  // Register a listener for connection open/close events
   public set connectionStateListener(listener: ConnectionStateListener) {
     this._connectionStateListener = listener
   }
 
+  // Register a listener for takeover state changes
   public set takeOverStateListener(listener: TakeOverStateListener) {
     this._takeOverStateListener = listener
   }
@@ -96,6 +129,7 @@ export default class SoftPhoneWebSocket {
     this._transcriptListener = listener
   }
 
+  //  Close the socket with a normal closure code
   public disconnect() {
     if (this._socket) {
       this._socket.close(1000, 'closed by user request')
@@ -106,6 +140,7 @@ export default class SoftPhoneWebSocket {
     return this._isAudioExist
   }
 
+  // Send a hang-up signal to the server
   public hangup() {
     this.sendMessage({
       sequenceNumber: 0,
@@ -116,6 +151,10 @@ export default class SoftPhoneWebSocket {
     })
   }
 
+   /**
+   * Request the agent (human) to take over the call.
+   * Defaults to a browser-based takeover if no argument provided.
+   */
   public agentTakeOver(takeOver: ITakeOver = BrowserTakeOver) {
     this.sendMessage({
       sequenceNumber: 0,
@@ -132,7 +171,6 @@ export default class SoftPhoneWebSocket {
   }
 
   private handleMessage(message: MessageEvent): void {
-    
     const parsed: IWebSocketMessage = JSON.parse(message.data)
     const eventEmitter = this._eventEmitter
     if (parsed.type === WebSocketMessageType.TakeOver && parsed.payload) {
