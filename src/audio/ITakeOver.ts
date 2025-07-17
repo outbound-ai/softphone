@@ -1,20 +1,20 @@
 ﻿export enum TakeOverTypeEnum {
   none = 'none',
   browser = 'browser',
-  dialed = 'dialed',
+  dialed = 'dialed'
 }
 
 export interface ITakeOver {
-  type: TakeOverTypeEnum;
-  phoneNumber: string | null;
+  type: TakeOverTypeEnum
+  phoneNumber: string | null
 }
 
 export const NoTakeOver: ITakeOver = {
   type: TakeOverTypeEnum.none,
-  phoneNumber: null,
+  phoneNumber: null
 }
 
 export const BrowserTakeOver: ITakeOver = {
   type: TakeOverTypeEnum.browser,
-  phoneNumber: null,
+  phoneNumber: null
 }

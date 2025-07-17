@@ -1,4 +1,4 @@
-const buffer = new Int16Array(1);
+const buffer = new Int16Array(1)
 
 /**
  * An IEEE audio CODEC.
@@ -11,12 +11,12 @@ export default class Ieee {
    */
   static decode(sample32: number) {
     if (sample32 > 0) {
-      buffer[0] = sample32 * 32767.0;
+      buffer[0] = sample32 * 32767.0
     } else {
-      buffer[0] = sample32 * 32768.0;
+      buffer[0] = sample32 * 32768.0
     }
 
-    return buffer[0];
+    return buffer[0]
   }
 
   /**
@@ -26,9 +26,9 @@ export default class Ieee {
    */
   static encode(sample16: number): number {
     if (sample16 > 0) {
-      return sample16 / 32767.0;
+      return sample16 / 32767.0
     } else {
-      return sample16 / 32768.0;
+      return sample16 / 32768.0
     }
   }
 }

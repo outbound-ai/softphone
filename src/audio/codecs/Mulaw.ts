@@ -1,7 +1,7 @@
-const BIAS = 0x84;
-const CLIP = 32635;
+const BIAS = 0x84
+const CLIP = 32635
 
-const decodeTable = [0, 132, 396, 924, 1980, 4092, 8316, 16764];
+const decodeTable = [0, 132, 396, 924, 1980, 4092, 8316, 16764]
 
 const encodeTable = [
   0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5,
@@ -11,7 +11,7 @@ const encodeTable = [
   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
   7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7
-];
+]
 
 /**
  * A MuLaw audio compression CODEC.
@@ -23,23 +23,23 @@ export default class Mulaw {
    * @returns The uLaw encoded byte.
    */
   static encode(sample16: number): number {
-    const sign = (sample16 >> 8) & 0x80;
+    const sign = (sample16 >> 8) & 0x80
 
     if (sign !== 0) {
-      sample16 = -sample16;
+      sample16 = -sample16
     }
 
-    sample16 = sample16 + BIAS;
+    sample16 = sample16 + BIAS
 
     if (sample16 > CLIP) {
-      sample16 = CLIP;
+      sample16 = CLIP
     }
 
-    const exponent = encodeTable[(sample16 >> 7) & 0xff];
-    const mantissa = (sample16 >> (exponent + 3)) & 0x0f;
-    const sample8 = ~(sign | (exponent << 4) | mantissa);
+    const exponent = encodeTable[(sample16 >> 7) & 0xff]
+    const mantissa = (sample16 >> (exponent + 3)) & 0x0f
+    const sample8 = ~(sign | (exponent << 4) | mantissa)
 
-    return sample8;
+    return sample8
   }
 
   /**
@@ -48,16 +48,16 @@ export default class Mulaw {
    * @returns A 16-bit signed integer PCM audio sample.
    */
   static decode(sample8: number): number {
-    sample8 = ~sample8;
-    const sign = sample8 & 0x80;
-    const exponent = (sample8 >> 4) & 0x07;
-    const mantissa = sample8 & 0x0f;
-    let sample16 = decodeTable[exponent] + (mantissa << (exponent + 3));
+    sample8 = ~sample8
+    const sign = sample8 & 0x80
+    const exponent = (sample8 >> 4) & 0x07
+    const mantissa = sample8 & 0x0f
+    let sample16 = decodeTable[exponent] + (mantissa << (exponent + 3))
 
     if (sign !== 0) {
-      sample16 = -sample16;
+      sample16 = -sample16
     }
 
-    return sample16;
+    return sample16
   }
 }

@@ -151,7 +151,7 @@ export default class SoftPhoneWebSocket {
     })
   }
 
-   /**
+  /**
    * Request the agent (human) to take over the call.
    * Defaults to a browser-based takeover if no argument provided.
    */
