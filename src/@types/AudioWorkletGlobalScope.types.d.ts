@@ -1,12 +1,12 @@
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/sampleRate
  */
-declare const sampleRate: number;
+declare const sampleRate: number
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/currentTime
  */
-declare const currentTime: number;
+declare const currentTime: number
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletGlobalScope/registerProcessor
@@ -14,9 +14,9 @@ declare const currentTime: number;
 declare function registerProcessor(
   name: string,
   processorCtor: (new (options?: AudioWorkletNodeOptions) => AudioWorkletProcessor) & {
-    parameterDescriptors?: unknown[];
+    parameterDescriptors?: unknown[]
   }
-): unknown;
+): unknown
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletProcessor
@@ -25,21 +25,21 @@ interface AudioWorkletProcessor {
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletProcessor/port
    */
-  readonly port: MessagePort;
+  readonly port: MessagePort
 
   /**
    * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletProcessor/process
    */
-  process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: Record<string, Float32Array>): boolean;
+  process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: Record<string, Float32Array>): boolean
 }
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioWorkletProcessor
  */
 declare const AudioWorkletProcessor: {
-  prototype: AudioWorkletProcessor;
-  new(options?: AudioWorkletNodeOptions): AudioWorkletProcessor;
-};
+  prototype: AudioWorkletProcessor
+  new (options?: AudioWorkletNodeOptions): AudioWorkletProcessor
+}
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/AudioParamMap

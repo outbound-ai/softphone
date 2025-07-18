@@ -1,4 +1,4 @@
-import { atob, btoa } from 'abab';
+import { atob, btoa } from 'abab'
 
 export default class Base64 {
   /**
@@ -7,14 +7,14 @@ export default class Base64 {
    * @returns A base64 encoded string.
    */
   static encode(bytes: Uint8Array): string {
-    let binaryString = '';
+    let binaryString = ''
 
     for (let i = 0; i < bytes.length; i++) {
-      binaryString += String.fromCharCode(bytes[i]);
+      binaryString += String.fromCharCode(bytes[i])
     }
 
-    const result = btoa(binaryString);
-    return result ? result : '';
+    const result = btoa(binaryString)
+    return result ? result : ''
   }
 
   /**
@@ -23,18 +23,18 @@ export default class Base64 {
    * @returns An array of unsigned 8-bit integers.
    */
   static decode(base64: string): Uint8Array {
-    const binaryString = atob(base64);
+    const binaryString = atob(base64)
 
     if (!binaryString) {
-      return new Uint8Array(0);
+      return new Uint8Array(0)
     }
 
-    const bytes = new Uint8Array(binaryString.length);
+    const bytes = new Uint8Array(binaryString.length)
 
     for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
+      bytes[i] = binaryString.charCodeAt(i)
     }
 
-    return bytes;
+    return bytes
   }
 }
