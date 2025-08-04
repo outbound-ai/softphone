@@ -54,26 +54,24 @@ conversation.onTranscriptAvailable += (participantId, message) => {
 # Development Cycle
 The Demonstration Application can be used for development.
 
-Sometimes it's handy to use a different client, like the `aquarius` UI, which consumes the package.
+Sometimes it's handy to use a different client which consumes the package.
 To consume the package without publishing it, link a local instance.
-
-See the [aquarius readme](https://github.com/outbound-ai/aquarius#readme) for help with consuming this package.
 
 ## Link local package
 
 This is the documented method but it at least one user finds that it does not work reliably - or at all.
 
-`aquarius` uses `yarn` so this example uses `yarn` too.
+So this example uses `yarn`.
 
 - Build the softphone package:
   - `~/source/repos/Outbound.AI/SoftPhone $ yarn install`
   - `~/source/repos/Outbound.AI/SoftPhone $ yarn run build`
 - Create a link to the local package
   - `~/source/repos/Outbound.AI/SoftPhone $ yarn link`
-- Consume the local package in `aquarius`
-  - `~/source/repos/Outbound.AI/aquarius/source $ yarn link "@outbound-ai/softphone"`
-  - per @Cristian's advice, _**do not**_ run the following unless you are unlinking:
-  - `~/source/repos/Outbound.AI/aquarius/source $ yarn install --force`
+- Consume the local package in target repo
+  - `~/source/repos/<target>/source $ yarn link "@outbound-ai/softphone"`
+  - While this can be helpful in some cases, _**do not**_ run the following unless you are unlinking:
+  - `~/source/repos/<target>/source $ yarn install --force`
 
 ### Local Path Method for Local Version
 In the consumer's package.json, rather than naming the version, name the relative path to the package
