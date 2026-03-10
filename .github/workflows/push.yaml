@@ -5,10 +5,8 @@ on:
       - main
 jobs:
   verify-package-build:
-    runs-on: 
-      - self-hosted
-      - linux
-      - dev
+    runs-on: dev-aks-global-runner 
+    
     steps:
       - name: Checkout Branch
         uses: actions/checkout@v2
