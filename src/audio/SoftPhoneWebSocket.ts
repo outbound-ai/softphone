@@ -57,7 +57,8 @@ export default class SoftPhoneWebSocket {
    * Open a new WebSocket connection.
    * Retries up to five times before giving up.
    */
-  public connect(jobId: string, accessToken: string) {
+  public connect(jobId: string, accessToken: string, tntId: string | undefined) {
+    console.log(`SoftPhoneWebSocket: connect called with jobId=${jobId}, tntId=${tntId}`)
     const hostname = this._hostname
     const eventEmitter = this._eventEmitter
     const url = `${hostname}/api/v1/jobs/${jobId}/browser`
@@ -70,7 +71,9 @@ export default class SoftPhoneWebSocket {
     }
 
     // Include access token as a subprotocol header
-    const webSocket = new WebSocket(url, ['access_token', accessToken])
+    const webSocket = new WebSocket(url, ['access_token', accessToken
+      , ...(tntId ? ['outbound-ai-preferred-tenant', tntId] : [])
+    ])
 
     // Wire up low-level WebSocket events
     webSocket.addEventListener('open', this.handleOpen.bind(this))
@@ -78,7 +81,7 @@ export default class SoftPhoneWebSocket {
     webSocket.addEventListener('close', this.handleClose.bind(this))
     webSocket.addEventListener('error', () => {
       this.disconnect()
-      this.connect(jobId, accessToken)
+      this.connect(jobId, accessToken, tntId)
     })
 
     this._socket = webSocket
