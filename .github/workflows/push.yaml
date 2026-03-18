@@ -5,7 +5,7 @@ on:
       - main
 jobs:
   verify-package-build:
-    runs-on: dev-aks-global-runner 
+    runs-on: ubuntu-24.04
     
     steps:
       - name: Checkout Branch
