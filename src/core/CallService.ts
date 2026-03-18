@@ -24,7 +24,7 @@ export default class CallService {
   //   accessToken Token used to authenticate WebSocket connection
   //   micDeviceId Optional microphone device ID to select specific mic
   //   returns Promise resolving to a Conversation controller for this call
-  async getConversationAsync(jobId: string, accessToken: string, micDeviceId?: string | null): Promise<Conversation> {
+  async getConversationAsync(jobId: string, accessToken: string, tntId: string | undefined, micDeviceId?: string | null): Promise<Conversation> {
     if (CallService.SoftphoneAudioContext) {
       await CallService.SoftphoneAudioContext.audioCtx?.close()
     }
@@ -32,7 +32,7 @@ export default class CallService {
     await CallService.SoftphoneAudioContext.initializeAsync(micDeviceId)
 
     const webSocket = new SoftphoneWebSocket(this._hostname, CallService.EventEmitter)
-    webSocket.connect(jobId, accessToken)
+    webSocket.connect(jobId, accessToken, tntId)
     const conversation = new Conversation(webSocket, CallService.SoftphoneAudioContext)
     return Promise.resolve(conversation)
   }
