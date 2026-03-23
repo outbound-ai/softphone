@@ -1,6 +1,11 @@
 # Call Service Browser Softphone Client
 Call service client NPM package.
 
+## Version 8.0.7
+- Added support for tenant ID in WebSocket connections
+- The `getConversationAsync` method now accepts an optional `tntId` parameter
+- Tenant ID is included in the WebSocket subprotocol headers as `outbound-ai-preferred-tenant`
+
 # Example Usage
 
 ```javascript
@@ -10,8 +15,13 @@ Call service client NPM package.
 import CallService from "whatever-package";
 const callService = new CallService("ws(s)://callservice.host.com");
 
-// To join a conversation, you need to have the call's job id.
-const conversation = await callService.getConversationAsync("00000000-0000-0000-0000-0000000000");
+// To join a conversation, you need to have the call's job id and access token.
+// Optionally, you can provide a tenant ID for multi-tenant scenarios.
+const conversation = await callService.getConversationAsync(
+  "00000000-0000-0000-0000-0000000000",  // jobId
+  "your-access-token",                    // accessToken
+  "tenant-id"                             // tntId 
+);
 conversation.connected    // This will become true as long as the conversation is connected.
 
 // You can control the outbound audio using the following methods.
