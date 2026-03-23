@@ -3,7 +3,7 @@ Call service client NPM package.
 
 ## Version 8.0.7
 - Added support for tenant ID in WebSocket connections
-- The `getConversationAsync` method now accepts an optional `tntId` parameter
+- The `getConversationAsync` method now accepts an `tntId` parameter
 - Tenant ID is included in the WebSocket subprotocol headers as `outbound-ai-preferred-tenant`
 
 # Example Usage
